@@ -93,7 +93,7 @@ export const AnalyticsDashboard = () => {
             <Target className="h-4 w-4 text-secondary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-secondary">{currentResilience}%</div>
+            <div className={`text-2xl font-bold ${getResilienceClass(currentResilience)}`}>{currentResilience}%</div>
             <p className="text-xs text-muted-foreground mt-1">Stress coping ability</p>
           </CardContent>
         </Card>
@@ -147,8 +147,8 @@ export const AnalyticsDashboard = () => {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={resilienceData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="date" 
+                <XAxis
+                  dataKey="date"
                   stroke="hsl(var(--muted-foreground))"
                   tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 />
@@ -156,9 +156,9 @@ export const AnalyticsDashboard = () => {
                 <Line
                   type="monotone"
                   dataKey="resilience"
-                  stroke="hsl(var(--secondary))"
+                  stroke={resilienceStroke}
                   strokeWidth={3}
-                  dot={{ fill: "hsl(var(--secondary))", strokeWidth: 2, r: 5 }}
+                  dot={{ fill: resilienceStroke, strokeWidth: 2, r: 5 }}
                 />
               </LineChart>
             </ResponsiveContainer>
