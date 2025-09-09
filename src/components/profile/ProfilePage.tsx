@@ -1,28 +1,36 @@
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
 import { User, Heart, Target, Calendar } from "lucide-react";
+import { useProfile, useUpsertProfile, useMoodEntries } from "@/hooks/useSupabaseData";
 
 export const ProfilePage = () => {
-  const [preferences, setPreferences] = useState({
-    mindfulness: true,
-    breathingExercises: true,
-    journalingPrompts: true,
-    distractionTechniques: false,
-  });
+  const { data: profile } = useProfile();
+  const saveProfile = useUpsertProfile();
+  const { data: moods } = useMoodEntries(30);
 
-  const [primaryConcern, setPrimaryConcern] = useState("Motivation");
+  const daysActive = new Set((moods ?? []).map((m) => new Date(m.created_at).toDateString())).size;
+  const totalSessions = (moods ?? []).length;
+  const weeklyGoal = Math.min(100, Math.round(((moods ?? []).filter((m) => {
+    const d = new Date(m.created_at);
+    const diff = (Date.now() - d.getTime()) / (1000 * 60 * 60 * 24);
+    return diff <= 7;
+  }).length / 14) * 100));
 
-  const handlePreferenceChange = (key: string, value: boolean) => {
-    setPreferences(prev => ({
-      ...prev,
-      [key]: value,
-    }));
+  const [displayName, setDisplayName] = useState(profile?.display_name ?? "");
+  const [timezone, setTimezone] = useState(profile?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+  useEffect(() => {
+    setDisplayName(profile?.display_name ?? "");
+    setTimezone(profile?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone);
+  }, [profile]);
+
+  const handleSave = () => {
+    saveProfile.mutate({ display_name: displayName, timezone });
   };
 
   return (
@@ -34,7 +42,7 @@ export const ProfilePage = () => {
         </div>
         <div>
           <h1 className="text-3xl font-bold text-primary">Your Profile</h1>
-          <p className="text-muted-foreground mt-2">Welcome, simonadams181!</p>
+          <p className="text-muted-foreground mt-2">{profile?.display_name ? `Welcome, ${profile.display_name}!` : "Update your display name"}</p>
         </div>
       </div>
 
@@ -43,7 +51,7 @@ export const ProfilePage = () => {
         <Card className="bg-gradient-card border-border shadow-soft">
           <CardContent className="p-6 text-center">
             <Heart className="w-8 h-8 text-primary mx-auto mb-3" />
-            <div className="text-2xl font-bold text-foreground">24</div>
+            <div className="text-2xl font-bold text-foreground">{daysActive}</div>
             <p className="text-sm text-muted-foreground">Days Active</p>
           </CardContent>
         </Card>
@@ -51,15 +59,15 @@ export const ProfilePage = () => {
         <Card className="bg-gradient-card border-border shadow-soft">
           <CardContent className="p-6 text-center">
             <Target className="w-8 h-8 text-accent mx-auto mb-3" />
-            <div className="text-2xl font-bold text-foreground">156</div>
-            <p className="text-sm text-muted-foreground">Total Sessions</p>
+            <div className="text-2xl font-bold text-foreground">{totalSessions}</div>
+            <p className="text-sm text-muted-foreground">Mood Entries</p>
           </CardContent>
         </Card>
         
         <Card className="bg-gradient-card border-border shadow-soft">
           <CardContent className="p-6 text-center">
             <Calendar className="w-8 h-8 text-secondary mx-auto mb-3" />
-            <div className="text-2xl font-bold text-foreground">89%</div>
+            <div className="text-2xl font-bold text-foreground">{weeklyGoal}%</div>
             <p className="text-sm text-muted-foreground">Weekly Goal</p>
           </CardContent>
         </Card>
@@ -70,61 +78,25 @@ export const ProfilePage = () => {
         <CardHeader>
           <CardTitle className="text-foreground flex items-center gap-2">
             <Target className="w-5 h-5 text-primary" />
-            Your Preferences & Goals
+            Profile Settings
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Primary Concern */}
-          <div className="space-y-3">
-            <Label className="text-foreground font-medium">My primary concern is:</Label>
-            <div className="flex flex-wrap gap-2">
-              {["Motivation", "Anxiety", "Stress", "Depression", "Self-esteem", "Relationships"].map((concern) => (
-                <Badge
-                  key={concern}
-                  variant={primaryConcern === concern ? "default" : "outline"}
-                  className={`cursor-pointer transition-smooth ${
-                    primaryConcern === concern 
-                      ? "bg-gradient-primary text-primary-foreground shadow-glow" 
-                      : "hover:border-primary hover:shadow-soft"
-                  }`}
-                  onClick={() => setPrimaryConcern(concern)}
-                >
-                  {concern}
-                </Badge>
-              ))}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="display_name">Display Name</Label>
+              <Input id="display_name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="timezone">Timezone</Label>
+              <Input id="timezone" value={timezone} onChange={(e) => setTimezone(e.target.value)} />
             </div>
           </div>
-
-          {/* Coping Strategies */}
-          <div className="space-y-4">
-            <Label className="text-foreground font-medium">I prefer coping strategies like:</Label>
-            <div className="space-y-3">
-              {Object.entries({
-                mindfulness: "Mindfulness",
-                breathingExercises: "Breathing Exercises", 
-                journalingPrompts: "Journaling Prompts",
-                distractionTechniques: "Distraction Techniques"
-              }).map(([key, label]) => (
-                <div key={key} className="flex items-center space-x-3">
-                  <Checkbox
-                    id={key}
-                    checked={preferences[key as keyof typeof preferences]}
-                    onCheckedChange={(checked) => handlePreferenceChange(key, !!checked)}
-                    className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                  />
-                  <Label htmlFor={key} className="text-foreground cursor-pointer">
-                    {label}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Save Button */}
-          <Button 
+          <Button
+            onClick={handleSave}
             className="w-full bg-gradient-primary hover:shadow-glow transition-smooth"
           >
-            Save Preferences
+            Save Profile
           </Button>
         </CardContent>
       </Card>
