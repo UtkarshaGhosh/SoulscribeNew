@@ -57,6 +57,8 @@ export const AnalyticsDashboard = () => {
     return 'text-destructive';
   };
 
+  const resilienceStroke = currentResilience >= 75 ? 'hsl(var(--primary))' : currentResilience >= 40 ? 'hsl(var(--accent))' : 'hsl(var(--destructive))';
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto p-6">
       <div className="space-y-2">
