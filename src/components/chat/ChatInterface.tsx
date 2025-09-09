@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send } from "lucide-react";
+import { Send, Trash2 } from "lucide-react";
 import { MoodSelector } from "./MoodSelector";
 import { ChatMessage } from "./ChatMessage";
-import { useAddChatMessage, useChatMessages, useAddMoodEntry } from "@/hooks/useSupabaseData";
+import { useAddChatMessage, useChatMessages, useAddMoodEntry, useClearChat } from "@/hooks/useSupabaseData";
 
 import { useEffect, useState } from "react";
 export type Mood = "happy" | "sad" | "angry" | "anxious" | "calm" | "stressed" | "excited" | "lonely" | "frustrated" | "motivated";
@@ -20,12 +20,33 @@ interface ChatInterfaceProps {
   onMoodChange?: (mood: Mood) => void;
 }
 
+function initialMessages(): Message[] {
+  const now = new Date();
+  return [
+    {
+      id: "warning",
+      content:
+        "Caution: I am an AI assistant and not a licensed mental health professional. This chat is for supportive, general guidance only. If you are in crisis or have concerns about your safety, please contact local emergency services or a trusted professional immediately.",
+      isUser: false,
+      timestamp: now,
+    },
+    {
+      id: "welcome",
+      content:
+        "Hello. I’m a human, non-judgmental mental therapist. I’m here to listen and support you. What’s on your mind today?",
+      isUser: false,
+      timestamp: now,
+    },
+  ];
+}
+
 export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const { data: history } = useChatMessages();
   const addMessage = useAddChatMessage();
   const addMood = useAddMoodEntry();
+  const clearChat = useClearChat();
 
   useEffect(() => {
     if (history && history.length > 0) {
@@ -39,26 +60,7 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
         }))
       );
     } else {
-      setMessages([
-        {
-          id: "warning",
-          content: "Caution: I am an AI assistant and not a licensed mental health professional. This chat is for supportive, general guidance only. If you are in crisis or have concerns about your safety, please contact local emergency services or a trusted professional immediately.",
-          isUser: false,
-          timestamp: new Date(),
-        },
-        {
-          id: "recommend",
-          content: "This AI can provide coping strategies and listening, but it is not a substitute for professional therapy. Consider reaching out to a qualified mental health professional for diagnosis or long-term care.",
-          isUser: false,
-          timestamp: new Date(),
-        },
-        {
-          id: "welcome",
-          content: "Hello! I'm your AI Therapist. I'm here to listen and offer supportive suggestions. How can I help you today?",
-          isUser: false,
-          timestamp: new Date(),
-        },
-      ]);
+      setMessages(initialMessages());
     }
   }, [history]);
 
@@ -180,12 +182,27 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
     }, 800);
   };
 
+  const handleClearChat = async () => {
+    try {
+      await clearChat.mutateAsync();
+    } catch (e) {
+      // ignore error here, still reset local state
+    }
+    setMessages(initialMessages());
+    setInputMessage("");
+  };
+
   return (
     <div className="flex flex-col h-full max-w-4xl mx-auto">
       {/* Chat Header */}
-      <div className="p-6 border-b border-border">
-        <h1 className="text-2xl font-semibold text-foreground">AI Therapy Session</h1>
-        <p className="text-muted-foreground mt-1">A safe space for your thoughts and feelings</p>
+      <div className="p-6 border-b border-border flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-foreground">AI Therapy Session</h1>
+          <p className="text-muted-foreground mt-1">A safe space for your thoughts and feelings</p>
+        </div>
+        <Button variant="outline" onClick={handleClearChat} className="gap-2">
+          <Trash2 className="w-4 h-4" /> Clear chat
+        </Button>
       </div>
 
       {/* Messages */}
