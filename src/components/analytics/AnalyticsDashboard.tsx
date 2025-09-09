@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
-import { Heart, Zap, Target } from "lucide-react";
+import { Heart, Zap, Target, Activity, AlertTriangle } from "lucide-react";
 import { useWellness } from "@/hooks/useSupabaseData";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
