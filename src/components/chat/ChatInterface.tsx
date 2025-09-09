@@ -230,6 +230,10 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
     setClearCutoff(now);
     if (cutoffKey) {
       localStorage.setItem(cutoffKey, now.toISOString());
+    } else {
+      const { data } = await supabase.auth.getUser();
+      const key = data.user?.id ? `chatClearCutoff:${data.user.id}` : null;
+      if (key) localStorage.setItem(key, now.toISOString());
     }
     try {
       await clearChat.mutateAsync();
