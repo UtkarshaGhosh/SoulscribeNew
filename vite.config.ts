@@ -18,8 +18,6 @@ export default defineConfig(({ mode }) => ({
   // Add a simple dev-only API endpoint to proxy AI requests to the Gemini/Vertex API.
   // This runs in the Vite dev server (node) and keeps the GEMINI_API_KEY server-side.
   configureServer: (server) => {
-    const bodyParser = require('body-parser');
-    server.middlewares.use(bodyParser.json());
 
     server.middlewares.use('/api/generate', async (req, res, next) => {
       if (req.method !== 'POST') {
