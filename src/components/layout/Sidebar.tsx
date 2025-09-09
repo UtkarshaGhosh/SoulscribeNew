@@ -1,4 +1,4 @@
-import { Home, MessageCircle, User, BarChart3, Settings, Heart } from "lucide-react";
+import { Home, MessageCircle, User, BarChart3, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +12,6 @@ const navigation = [
   { id: "chat", icon: MessageCircle, label: "Chat" },
   { id: "profile", icon: User, label: "Profile" },
   { id: "analytics", icon: BarChart3, label: "Analytics" },
-  { id: "settings", icon: Settings, label: "Settings" },
 ];
 
 export const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
