@@ -2,104 +2,136 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* SoulSCRIBE Design System - Mental Wellness App
+All colors MUST be HSL for proper theming.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* SoulSCRIBE Dark Theme - Deep Ocean Tranquility */
+    --background: 200 30% 8%;
+    --foreground: 180 20% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 200 25% 10%;
+    --card-foreground: 180 20% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 200 25% 12%;
+    --popover-foreground: 180 20% 95%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Healing Teal */
+    --primary: 180 100% 40%;
+    --primary-foreground: 200 30% 8%;
+    --primary-glow: 180 100% 50%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - Deep Calm */
+    --secondary: 200 20% 15%;
+    --secondary-foreground: 180 20% 90%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted - Subtle Depth */
+    --muted: 200 15% 12%;
+    --muted-foreground: 180 10% 65%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - Energizing Cyan */
+    --accent: 190 100% 45%;
+    --accent-foreground: 200 30% 8%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 85% 55%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 200 20% 18%;
+    --input: 200 20% 15%;
+    --ring: 180 100% 45%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Sidebar - Navigation Sanctuary */
+    --sidebar-background: 200 35% 6%;
+    --sidebar-foreground: 180 15% 80%;
+    --sidebar-primary: 180 100% 40%;
+    --sidebar-primary-foreground: 200 30% 8%;
+    --sidebar-accent: 200 25% 12%;
+    --sidebar-accent-foreground: 180 20% 90%;
+    --sidebar-border: 200 25% 14%;
+    --sidebar-ring: 180 100% 45%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Mood-based Dynamic Backgrounds */
+    --mood-happy: 50 100% 60%;
+    --mood-sad: 220 60% 30%;
+    --mood-angry: 0 85% 55%;
+    --mood-anxious: 25 85% 55%;
+    --mood-calm: 180 60% 40%;
+    --mood-stressed: 10 70% 45%;
+    --mood-excited: 280 100% 60%;
+    --mood-lonely: 240 30% 25%;
+    --mood-frustrated: 15 80% 50%;
+    --mood-motivated: 120 70% 45%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Gradients for Immersive Experience */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-background: linear-gradient(180deg, hsl(var(--background)), hsl(200 35% 6%));
+    --gradient-card: linear-gradient(145deg, hsl(var(--card)), hsl(200 30% 12%));
+    --gradient-glow: radial-gradient(circle at center, hsl(var(--primary) / 0.3), transparent 70%);
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    /* Shadows for Depth */
+    --shadow-soft: 0 4px 20px hsl(200 30% 4% / 0.4);
+    --shadow-glow: 0 0 30px hsl(var(--primary) / 0.3);
+    --shadow-depth: 0 10px 40px hsl(200 35% 3% / 0.6);
 
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    transition: var(--transition-smooth);
   }
 
   body {
     @apply bg-background text-foreground;
+    transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Dynamic mood-based backgrounds */
+  body.mood-happy {
+    background: linear-gradient(135deg, hsl(var(--mood-happy) / 0.1), hsl(var(--background)));
+  }
+  
+  body.mood-sad {
+    background: linear-gradient(135deg, hsl(var(--mood-sad) / 0.1), hsl(var(--background)));
+  }
+  
+  body.mood-angry {
+    background: linear-gradient(135deg, hsl(var(--mood-angry) / 0.1), hsl(var(--background)));
+  }
+  
+  body.mood-anxious {
+    background: linear-gradient(135deg, hsl(var(--mood-anxious) / 0.1), hsl(var(--background)));
+  }
+  
+  body.mood-calm {
+    background: linear-gradient(135deg, hsl(var(--mood-calm) / 0.1), hsl(var(--background)));
+  }
+  
+  body.mood-stressed {
+    background: linear-gradient(135deg, hsl(var(--mood-stressed) / 0.1), hsl(var(--background)));
+  }
+  
+  body.mood-excited {
+    background: linear-gradient(135deg, hsl(var(--mood-excited) / 0.1), hsl(var(--background)));
+  }
+  
+  body.mood-lonely {
+    background: linear-gradient(135deg, hsl(var(--mood-lonely) / 0.1), hsl(var(--background)));
+  }
+  
+  body.mood-frustrated {
+    background: linear-gradient(135deg, hsl(var(--mood-frustrated) / 0.1), hsl(var(--background)));
+  }
+  
+  body.mood-motivated {
+    background: linear-gradient(135deg, hsl(var(--mood-motivated) / 0.1), hsl(var(--background)));
   }
 }

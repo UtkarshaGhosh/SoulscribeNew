@@ -22,6 +22,7 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          glow: "hsl(var(--primary-glow))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -57,6 +58,33 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        mood: {
+          happy: "hsl(var(--mood-happy))",
+          sad: "hsl(var(--mood-sad))",
+          angry: "hsl(var(--mood-angry))",
+          anxious: "hsl(var(--mood-anxious))",
+          calm: "hsl(var(--mood-calm))",
+          stressed: "hsl(var(--mood-stressed))",
+          excited: "hsl(var(--mood-excited))",
+          lonely: "hsl(var(--mood-lonely))",
+          frustrated: "hsl(var(--mood-frustrated))",
+          motivated: "hsl(var(--mood-motivated))",
+        },
+      },
+      backgroundImage: {
+        'gradient-primary': 'var(--gradient-primary)',
+        'gradient-background': 'var(--gradient-background)',
+        'gradient-card': 'var(--gradient-card)',
+        'gradient-glow': 'var(--gradient-glow)',
+      },
+      boxShadow: {
+        'soft': 'var(--shadow-soft)',
+        'glow': 'var(--shadow-glow)',
+        'depth': 'var(--shadow-depth)',
+      },
+      transitionTimingFunction: {
+        'smooth': 'var(--transition-smooth)',
+        'bounce': 'var(--transition-bounce)',
       },
       borderRadius: {
         lg: "var(--radius)",
