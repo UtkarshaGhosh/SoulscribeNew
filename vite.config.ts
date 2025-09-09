@@ -46,16 +46,14 @@ export default defineConfig(({ mode }) => ({
         const messages = payload.messages ?? [];
         const mood = payload.mood ?? null;
 
-        // Build a simple prompt from the messages and mood
-        const promptParts: string[] = [];
-        if (mood) promptParts.push(`User mood: ${mood}`);
-        promptParts.push('Conversation:');
+        // Build contents for Gemini generateContent API
+        const contents: Array<{ role: 'user' | 'model'; parts: Array<{ text: string }> }> = [];
+        if (mood) {
+          contents.push({ role: 'user', parts: [{ text: `My current mood is: ${mood}.` }] });
+        }
         messages.forEach((m: any) => {
-          const role = m.isUser ? 'User' : 'Assistant';
-          promptParts.push(`${role}: ${m.content}`);
+          contents.push({ role: m.isUser ? 'user' : 'model', parts: [{ text: String(m.content ?? '') }] });
         });
-        promptParts.push('Assistant:');
-        const prompt = promptParts.join('\n');
 
         const key = process.env.GEMINI_API_KEY;
         if (!key) {
@@ -64,19 +62,28 @@ export default defineConfig(({ mode }) => ({
           return;
         }
 
-        const model = process.env.GEMINI_MODEL || 'text-bison-001';
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta2/models/${model}:generate?key=${encodeURIComponent(
+        const model = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(
           key
         )}`;
 
         const genResponse = await fetch(apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: { text: prompt }, temperature: 0.7, maxOutputTokens: 512 }),
+          body: JSON.stringify({
+            contents,
+            generationConfig: { temperature: 0.7, maxOutputTokens: 512 },
+          }),
         });
 
         const json = await genResponse.json();
-        const reply = json?.candidates?.[0]?.content ?? json?.output?.[0]?.content ?? json?.candidates?.[0]?.output ?? null;
+        const firstCandidate = json?.candidates?.[0] ?? null;
+        const parts = firstCandidate?.content?.parts ?? [];
+        const textReply = Array.isArray(parts)
+          ? parts.map((p: any) => p?.text).filter(Boolean).join('\n')
+          : '';
+
+        const reply = textReply && textReply.trim().length > 0 ? textReply : null;
         if (!reply) {
           res.statusCode = 500;
           res.end(JSON.stringify({ error: 'No reply from model', raw: json }));
