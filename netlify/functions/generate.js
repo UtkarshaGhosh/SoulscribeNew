@@ -12,12 +12,23 @@ exports.handler = async function (event, context) {
     const mood = payload.mood ?? null;
 
     const contents = [];
+
+    // Prepend a persona instruction so the model responds as a compassionate mental health therapist.
+    // This instruction guides the model's behavior for all subsequent messages in this session.
+    contents.push({ role: 'user', parts: [{ text: `You are a compassionate, non-judgmental mental health therapist. When responding, be empathetic, prioritize safety, avoid providing medical diagnoses, and encourage users to seek professional human help when appropriate. If the user expresses intent to harm themselves or others, provide crisis resource suggestions and advise immediate contact with emergency services. Keep responses supportive, evidence-informed, and within the scope of general mental health guidance.` }] });
+
     if (mood) {
       contents.push({ role: 'user', parts: [{ text: `My current mood is: ${mood}.` }] });
     }
+
+    // Append user/model conversation history
     messages.forEach((m) => {
       contents.push({ role: m.isUser ? 'user' : 'model', parts: [{ text: String(m.content ?? '') }] });
     });
+
+    // Also include an initial warning message for the model to repeat or acknowledge if the conversation is starting
+    // (model may choose to not repeat it verbatim). This helps ensure the model includes cautionary language when needed.
+    contents.push({ role: 'user', parts: [{ text: `At the start of a new chat, include a brief caution about using AI for mental health: this service is not a substitute for professional care, and if they are in crisis they should seek immediate human help. Suggest contacting a qualified professional as needed.` }] });
 
     const key = process.env.GEMINI_API_KEY;
     if (!key) {
