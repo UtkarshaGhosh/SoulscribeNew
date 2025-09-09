@@ -50,8 +50,29 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
     }
   }, [history]);
 
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const callAI = async (history: Message[], mood?: Mood) => {
+    try {
+      setIsGenerating(true);
+      const payload = { messages: history.slice(-10), mood };
+      const resp = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const json = await resp.json();
+      return json.reply as string;
+    } catch (err) {
+      console.error('AI call failed', err);
+      return "I'm having trouble responding right now. Please try again later.";
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() || isGenerating) return;
 
     const newMessage: Message = {
       id: Date.now().toString(),
@@ -64,25 +85,18 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
     addMessage.mutate({ message: inputMessage, is_user: true });
     setInputMessage("");
 
-    setTimeout(() => {
-      const responses = [
-        "I understand how you're feeling. Can you tell me more about what's been on your mind?",
-        "Thank you for sharing that with me. It sounds like you're dealing with a lot right now.",
-        "Those feelings are completely valid. Have you tried any breathing exercises when you feel this way?",
-        "It's great that you're reaching out. Remember, taking care of your mental health is a sign of strength.",
-        "I hear you. Sometimes it can help to journal about these thoughts. Would you like me to suggest some prompts?",
-      ];
+    // build history for AI
+    const historyForAI = [...messages, newMessage];
+    const aiText = await callAI(historyForAI);
 
-      const aiText = responses[Math.floor(Math.random() * responses.length)];
-      const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        content: aiText,
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, aiResponse]);
-      addMessage.mutate({ message: aiText, is_user: false });
-    }, 800);
+    const aiResponse: Message = {
+      id: (Date.now() + 1).toString(),
+      content: aiText,
+      isUser: false,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, aiResponse]);
+    addMessage.mutate({ message: aiText, is_user: false });
   };
 
   const handleMoodSelect = (mood: Mood) => {
