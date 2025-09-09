@@ -6,6 +6,7 @@ import { MoodSelector } from "./MoodSelector";
 import { ChatMessage } from "./ChatMessage";
 import { useAddChatMessage, useChatMessages, useAddMoodEntry } from "@/hooks/useSupabaseData";
 
+import { useEffect, useState } from "react";
 export type Mood = "happy" | "sad" | "angry" | "anxious" | "calm" | "stressed" | "excited" | "lonely" | "frustrated" | "motivated";
 
 interface Message {
