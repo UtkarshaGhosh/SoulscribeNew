@@ -47,6 +47,7 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
   const addMessage = useAddChatMessage();
   const addMood = useAddMoodEntry();
   const clearChat = useClearChat();
+  const [clearCutoff, setClearCutoff] = useState<Date | null>(null);
 
   useEffect(() => {
     if (history) {
