@@ -17,6 +17,8 @@ const navigation = [
 ];
 
 export const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-16 h-screen bg-sidebar border-r border-sidebar-border flex flex-col items-center py-6 shadow-soft">
       {/* Logo */}
