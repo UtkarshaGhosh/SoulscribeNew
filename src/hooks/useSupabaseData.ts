@@ -53,8 +53,89 @@ export function useAddChatMessage() {
   });
 }
 
+const MOOD_WELLBEING: Record<string, number> = {
+  happy: 9,
+  calm: 7,
+  excited: 8,
+  motivated: 8,
+  anxious: 4,
+  stressed: 3,
+  angry: 2,
+  frustrated: 3,
+  sad: 3,
+  lonely: 3,
+};
+const MOOD_ENERGY: Record<string, number> = {
+  excited: 8,
+  happy: 7,
+  motivated: 7,
+  calm: 5,
+  anxious: 4,
+  stressed: 3,
+  angry: 4,
+  frustrated: 3,
+  sad: 3,
+  lonely: 2,
+};
+
+function dateKey(d: Date) { return d.toISOString().slice(0,10); }
+
 export function useWellness(lastNDays = 7) {
-  return useQuery({ queryKey: ["wellness", lastNDays], queryFn: () => getLastNDaysWellness(lastNDays), staleTime: 60_000 });
+  return useQuery({
+    queryKey: ["wellness", lastNDays],
+    staleTime: 60_000,
+    queryFn: async () => {
+      const [db, moods] = await Promise.all([
+        getLastNDaysWellness(lastNDays),
+        listMoodEntriesLastNDays(lastNDays),
+      ]);
+      const byDateMoods = new Map<string, typeof moods>();
+      for (let i = 0; i < lastNDays; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - (lastNDays - 1 - i));
+        byDateMoods.set(dateKey(d), []);
+      }
+      moods.forEach(m => {
+        const k = m.created_at.slice(0,10);
+        if (byDateMoods.has(k)) byDateMoods.get(k)!.push(m);
+      });
+
+      const dbByDate = new Map(db.map(w => [w.date, w] as const));
+      const result = Array.from(byDateMoods.keys()).map(date => {
+        const fromDb = dbByDate.get(date);
+        if (fromDb && fromDb.wellbeing_score != null && fromDb.energy_level != null && fromDb.resilience_score != null) return fromDb;
+        const items = byDateMoods.get(date)!;
+        if (!items.length) return fromDb ?? { date, wellbeing_score: 0, energy_level: 0, resilience_score: 0, productivity_score: 0, emotional_volatility: 0, id: "derived-"+date, user_id: "", created_at: new Date().toISOString(), updated_at: new Date().toISOString(), wellbeing_score: 0 as any } as any;
+        const ws: number[] = [];
+        const es: number[] = [];
+        items.forEach(r => {
+          const w = MOOD_WELLBEING[String(r.mood)] ?? 5;
+          ws.push(w);
+          const e = (r.energy_level ?? MOOD_ENERGY[String(r.mood)] ?? 5);
+          es.push(e);
+        });
+        const avg = (arr: number[]) => arr.reduce((a,b)=>a+b,0)/arr.length;
+        const meanW = avg(ws);
+        const meanE = avg(es);
+        const variance = ws.reduce((a,b)=>a+Math.pow(b-meanW,2),0)/ws.length;
+        const std = Math.sqrt(variance);
+        const resilience = Math.max(0, Math.min(10, 10 - std));
+        return {
+          id: `derived-${date}`,
+          user_id: "",
+          date,
+          wellbeing_score: Number(meanW.toFixed(1)),
+          energy_level: Number(meanE.toFixed(1)),
+          resilience_score: Number(resilience.toFixed(1)),
+          productivity_score: 0,
+          emotional_volatility: Number(std.toFixed(1)),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        } as any;
+      });
+      return result;
+    }
+  });
 }
 
 export function useUpsertWellness() {
