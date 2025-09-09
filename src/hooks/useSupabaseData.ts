@@ -57,7 +57,18 @@ export function useClearChat() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: clearChatMessages,
-    onSuccess: () => {
+    onMutate: async () => {
+      await qc.cancelQueries({ queryKey: ["chat_messages"] });
+      const previous = qc.getQueryData(["chat_messages"]);
+      qc.setQueryData(["chat_messages"], []);
+      return { previous } as { previous: unknown };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous !== undefined) {
+        qc.setQueryData(["chat_messages"], context.previous);
+      }
+    },
+    onSettled: () => {
       qc.invalidateQueries({ queryKey: ["chat_messages"] });
     },
   });
