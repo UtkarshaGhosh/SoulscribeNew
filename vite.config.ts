@@ -28,8 +28,23 @@ export default defineConfig(({ mode }) => ({
         return;
       }
       try {
-        // bodyParser.json() already parsed the body into req.body
-        const payload = (req as any).body ?? {};
+        // bodyParser.json() usually parsed the body into req.body
+        let payload: any = (req as any).body ?? null;
+        if (!payload) {
+          // fallback: read the stream once
+          payload = await new Promise((resolve, reject) => {
+            let body = '';
+            req.on('data', (chunk) => (body += chunk));
+            req.on('end', () => {
+              try {
+                resolve(body ? JSON.parse(body) : {});
+              } catch (e) {
+                reject(e);
+              }
+            });
+            req.on('error', (err) => reject(err));
+          }).catch((e) => ({}));
+        }
         const messages = payload.messages ?? [];
         const mood = payload.mood ?? null;
 
