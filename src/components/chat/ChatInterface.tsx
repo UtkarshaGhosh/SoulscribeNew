@@ -34,7 +34,7 @@ function initialMessages(): Message[] {
     {
       id: "welcome",
       content:
-        "Hello. I’m a human, non-judgmental mental therapist. I’m here to listen and support you. What’s on your mind today?",
+        "Hello. I’m a non-human, non-judgmental mental therapist. I’m here to listen and support you. What’s on your mind today?",
       isUser: false,
       timestamp: now,
     },
