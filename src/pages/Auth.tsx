@@ -123,9 +123,9 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/10 p-4">
       <div className="w-full max-w-5xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+        <div className="grid grid-cols-2 gap-8 items-stretch">
           {/* Left: Logo / Image panel */}
-          <div className="hidden md:block rounded-xl overflow-hidden border border-border/50 shadow-depth bg-card/40 backdrop-blur-sm">
+          <div className="block rounded-xl overflow-hidden border border-border/50 shadow-depth bg-card/40 backdrop-blur-sm h-full">
             <img
               src="/Soulscribe.jpg"
               alt="SoulSCRIBE"
