@@ -61,7 +61,20 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      const json = await resp.json();
+      let json: any;
+      try {
+        json = await resp.json();
+      } catch (err) {
+        // Sometimes the body stream may already be read by middleware or proxies.
+        // Try to recover by reading text and parsing.
+        try {
+          const txt = await resp.text();
+          json = txt ? JSON.parse(txt) : {};
+        } catch (err2) {
+          console.error('Failed to parse AI response', err, err2);
+          throw err2 || err;
+        }
+      }
       return json.reply as string;
     } catch (err) {
       console.error('AI call failed', err);
