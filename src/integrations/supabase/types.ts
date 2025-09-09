@@ -14,7 +14,129 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      chat_messages: {
+        Row: {
+          created_at: string
+          id: string
+          is_user: boolean
+          message: string
+          mood_context: Database["public"]["Enums"]["mood_type"] | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_user?: boolean
+          message: string
+          mood_context?: Database["public"]["Enums"]["mood_type"] | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_user?: boolean
+          message?: string
+          mood_context?: Database["public"]["Enums"]["mood_type"] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      mood_entries: {
+        Row: {
+          created_at: string
+          energy_level: number | null
+          id: string
+          mood: Database["public"]["Enums"]["mood_type"]
+          notes: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          energy_level?: number | null
+          id?: string
+          mood: Database["public"]["Enums"]["mood_type"]
+          notes?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          energy_level?: number | null
+          id?: string
+          mood?: Database["public"]["Enums"]["mood_type"]
+          notes?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          timezone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          timezone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          timezone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wellness_metrics: {
+        Row: {
+          created_at: string
+          date: string
+          emotional_volatility: number | null
+          energy_level: number | null
+          id: string
+          productivity_score: number | null
+          resilience_score: number | null
+          updated_at: string
+          user_id: string
+          wellbeing_score: number | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          emotional_volatility?: number | null
+          energy_level?: number | null
+          id?: string
+          productivity_score?: number | null
+          resilience_score?: number | null
+          updated_at?: string
+          user_id: string
+          wellbeing_score?: number | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          emotional_volatility?: number | null
+          energy_level?: number | null
+          id?: string
+          productivity_score?: number | null
+          resilience_score?: number | null
+          updated_at?: string
+          user_id?: string
+          wellbeing_score?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +145,17 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      mood_type:
+        | "happy"
+        | "sad"
+        | "angry"
+        | "anxious"
+        | "calm"
+        | "stressed"
+        | "excited"
+        | "lonely"
+        | "frustrated"
+        | "motivated"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +282,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      mood_type: [
+        "happy",
+        "sad",
+        "angry",
+        "anxious",
+        "calm",
+        "stressed",
+        "excited",
+        "lonely",
+        "frustrated",
+        "motivated",
+      ],
+    },
   },
 } as const
