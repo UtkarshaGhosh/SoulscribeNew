@@ -2,6 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import { Heart, Zap, Target } from "lucide-react";
 import { useWellness } from "@/hooks/useSupabaseData";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 function formatDate(d: Date) {
   return d.toISOString().slice(0, 10);
