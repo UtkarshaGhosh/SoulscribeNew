@@ -101,32 +101,34 @@ export const ProfilePage = () => {
         </CardContent>
       </Card>
 
-      {/* Recent Activity */}
+      {/* Mood History */}
       <Card className="bg-gradient-card border-border shadow-soft">
         <CardHeader>
-          <CardTitle className="text-foreground">Recent Activity</CardTitle>
+          <CardTitle className="text-foreground">Mood History (last 30 days)</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {[
-              { activity: "Completed mindfulness session", time: "2 hours ago", mood: "calm" },
-              { activity: "Logged mood: Happy", time: "5 hours ago", mood: "happy" },
-              { activity: "Chat session with AI therapist", time: "1 day ago", mood: "motivated" },
-              { activity: "Weekly reflection completed", time: "2 days ago", mood: "neutral" },
-            ].map((item, index) => (
-              <div key={index} className="flex items-center justify-between py-3 border-b border-border last:border-b-0">
-                <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 rounded-full bg-primary shadow-glow"></div>
-                  <div>
-                    <p className="text-foreground text-sm font-medium">{item.activity}</p>
-                    <p className="text-muted-foreground text-xs">{item.time}</p>
+            {(!moods || moods.length === 0) ? (
+              <p className="text-muted-foreground">No mood entries recorded in the last 30 days.</p>
+            ) : (
+              moods.map((m) => (
+                <div key={m.id} className="flex items-center justify-between py-3 border-b border-border last:border-b-0">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 rounded-full bg-primary shadow-glow mt-1"></div>
+                    <div>
+                      <p className="text-foreground text-sm font-medium">{m.mood}</p>
+                      <p className="text-muted-foreground text-xs">{new Date(m.created_at).toLocaleString()}</p>
+                      {m.notes && <p className="text-muted-foreground text-xs mt-1">{m.notes}</p>}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    {typeof m.energy_level === 'number' && (
+                      <Badge variant="outline" className="text-xs">Energy: {m.energy_level}</Badge>
+                    )}
                   </div>
                 </div>
-                <Badge variant="outline" className="text-xs">
-                  {item.mood}
-                </Badge>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </CardContent>
       </Card>

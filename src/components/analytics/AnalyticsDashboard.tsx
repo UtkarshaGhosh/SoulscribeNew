@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
-import { Heart, Zap, Target } from "lucide-react";
+import { Heart, Zap, Target, Activity, AlertTriangle } from "lucide-react";
 import { useWellness } from "@/hooks/useSupabaseData";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -16,10 +16,15 @@ export const AnalyticsDashboard = () => {
 
   // Re-derive datasets from the fetched wellness data
   const wellbeingData = wellness.map((w) => ({ date: w.date, wellbeing: Number(w.wellbeing_score ?? 0), energy: Number(w.energy_level ?? 0) }));
+  const productivityData = wellness.map((w) => ({ date: w.date, productivity: Number(w.productivity_score ?? 0) }));
+  const volatilityData = wellness.map((w) => ({ date: w.date, volatility: Number(w.emotional_volatility ?? 0) }));
   const resilienceData = wellness.map((w) => ({ date: w.date, resilience: Math.round(Number(w.resilience_score ?? 0) * 10) }));
   const avgWellbeing = wellbeingData.length ? wellbeingData.reduce((acc, curr) => acc + curr.wellbeing, 0) / wellbeingData.length : 0;
   const avgEnergy = wellbeingData.length ? wellbeingData.reduce((acc, curr) => acc + curr.energy, 0) / wellbeingData.length : 0;
+  const avgProductivity = productivityData.length ? productivityData.reduce((acc, curr) => acc + curr.productivity, 0) / productivityData.length : 0;
+  const avgVolatility = volatilityData.length ? volatilityData.reduce((acc, curr) => acc + curr.volatility, 0) / volatilityData.length : 0;
   const currentResilience = resilienceData.length ? resilienceData[resilienceData.length - 1].resilience : 0;
+  const currentVolatility = volatilityData.length ? volatilityData[volatilityData.length - 1].volatility : 0;
 
   // Realtime subscriptions to keep analytics live
   useEffect(() => {
@@ -66,7 +71,7 @@ export const AnalyticsDashboard = () => {
         <p className="text-muted-foreground">Track your emotional patterns and mental health insights</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-gradient-card border-border shadow-soft">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Wellbeing Score</CardTitle>
@@ -97,6 +102,28 @@ export const AnalyticsDashboard = () => {
           <CardContent>
             <div className={`text-2xl font-bold ${getResilienceClass(currentResilience)}`}>{currentResilience}%</div>
             <p className="text-xs text-muted-foreground mt-1">Stress coping ability</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-card border-border shadow-soft">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Productivity Score</CardTitle>
+            <Activity className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-primary">{avgProductivity.toFixed(1)}/10</div>
+            <p className="text-xs text-muted-foreground mt-1">Average productivity (derived)</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-card border-border shadow-soft">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Emotional Volatility</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-destructive" />
+          </CardHeader>
+          <CardContent>
+            <div className={`text-2xl font-bold ${currentVolatility <= 2 ? 'text-primary' : currentVolatility <=5 ? 'text-accent' : 'text-destructive'}`}>{avgVolatility.toFixed(1)}</div>
+            <p className="text-xs text-muted-foreground mt-1">Lower is steadier; higher indicates more fluctuation</p>
           </CardContent>
         </Card>
 
