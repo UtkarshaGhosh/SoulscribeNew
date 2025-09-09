@@ -71,7 +71,7 @@ export const AnalyticsDashboard = () => {
         <p className="text-muted-foreground">Track your emotional patterns and mental health insights</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-gradient-card border-border shadow-soft">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Wellbeing Score</CardTitle>
