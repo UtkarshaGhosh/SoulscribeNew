@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getMyProfile, upsertMyProfile } from "@/integrations/supabase/repositories/profiles";
 import { addMoodEntry, listMoodEntriesLastNDays, getMoodDistributionForDate } from "@/integrations/supabase/repositories/moodEntries";
-import { addChatMessage, listChatMessages } from "@/integrations/supabase/repositories/chatMessages";
+import { addChatMessage, listChatMessages, clearChatMessages } from "@/integrations/supabase/repositories/chatMessages";
 import { upsertWellnessMetric, getLastNDaysWellness } from "@/integrations/supabase/repositories/wellnessMetrics";
 import type { Enums } from "@/integrations/supabase/types";
 
@@ -47,6 +47,16 @@ export function useAddChatMessage() {
   return useMutation({
     mutationFn: ({ message, is_user, mood_context }: { message: string; is_user: boolean; mood_context?: Enums<'mood_type'> }) =>
       addChatMessage(message, is_user, mood_context),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["chat_messages"] });
+    },
+  });
+}
+
+export function useClearChat() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: clearChatMessages,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["chat_messages"] });
     },
