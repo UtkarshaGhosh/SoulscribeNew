@@ -10,17 +10,21 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Apply persisted mood class (if any) on initial load so pages like /auth reflect last mood
+  // Apply persisted mood class (if any) on initial load, but skip on auth pages
   if (typeof window !== 'undefined') {
     try {
-      const existing = JSON.parse(localStorage.getItem('soulscribe-moods') || '[]');
-      if (Array.isArray(existing) && existing.length) {
-        const last = existing[existing.length - 1];
-        if (last && last.mood) {
-          Array.from(document.body.classList)
-            .filter((c) => c.startsWith('mood-'))
-            .forEach((c) => document.body.classList.remove(c));
-          document.body.classList.add(`mood-${last.mood}`);
+      const pathname = window.location.pathname || '';
+      // Do not apply mood background on the auth route (login/signup)
+      if (!pathname.startsWith('/auth')) {
+        const existing = JSON.parse(localStorage.getItem('soulscribe-moods') || '[]');
+        if (Array.isArray(existing) && existing.length) {
+          const last = existing[existing.length - 1];
+          if (last && last.mood) {
+            Array.from(document.body.classList)
+              .filter((c) => c.startsWith('mood-'))
+              .forEach((c) => document.body.classList.remove(c));
+            document.body.classList.add(`mood-${last.mood}`);
+          }
         }
       }
     } catch (e) {
