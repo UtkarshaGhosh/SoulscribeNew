@@ -1,5 +1,7 @@
-import { Home, MessageCircle, User, BarChart3, Heart } from "lucide-react";
+import { Home, MessageCircle, User, BarChart3, Heart, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -51,6 +53,26 @@ export const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
           );
         })}
       </nav>
+
+      {/* Logout */}
+      <div className="mb-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="w-12 h-12 rounded-xl transition-smooth hover:bg-sidebar-accent hover:shadow-soft"
+          onClick={async () => {
+            try {
+              await supabase.auth.signOut();
+              // navigate to auth page
+              navigate('/auth');
+            } catch (e) {
+              console.error('Logout failed', e);
+            }
+          }}
+        >
+          <LogOut className="w-5 h-5 text-sidebar-foreground" />
+        </Button>
+      </div>
     </div>
   );
 };
