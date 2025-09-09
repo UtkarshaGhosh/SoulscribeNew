@@ -36,3 +36,13 @@ export async function listChatMessages(limit = 100) {
     return [] as Tables<'chat_messages'>[];
   }
 }
+
+export async function clearChatMessages() {
+  const user_id = await requireUserId();
+  const { error } = await supabase
+    .from("chat_messages")
+    .delete()
+    .eq("user_id", user_id);
+  if (error) throw error;
+  return true;
+}
