@@ -47,22 +47,27 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
   const addMessage = useAddChatMessage();
   const addMood = useAddMoodEntry();
   const clearChat = useClearChat();
+  const [clearCutoff, setClearCutoff] = useState<Date | null>(null);
 
   useEffect(() => {
-    if (history && history.length > 0) {
-      setMessages(
-        history.map((m) => ({
-          id: m.id,
-          content: m.message,
-          isUser: m.is_user,
-          mood: m.mood_context ?? undefined,
-          timestamp: new Date(m.created_at),
-        }))
-      );
+    if (history) {
+      const mapped = history.map((m) => ({
+        id: m.id,
+        content: m.message,
+        isUser: m.is_user,
+        mood: m.mood_context ?? undefined,
+        timestamp: new Date(m.created_at),
+      }));
+      const filtered = clearCutoff ? mapped.filter((m) => m.timestamp > clearCutoff) : mapped;
+      if (filtered.length > 0) {
+        setMessages(filtered);
+      } else {
+        setMessages(initialMessages());
+      }
     } else {
       setMessages(initialMessages());
     }
-  }, [history]);
+  }, [history, clearCutoff]);
 
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -183,10 +188,11 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
   };
 
   const handleClearChat = async () => {
+    const now = new Date();
+    setClearCutoff(now);
     try {
       await clearChat.mutateAsync();
     } catch (e) {
-      // ignore error here, still reset local state
     }
     setMessages(initialMessages());
     setInputMessage("");

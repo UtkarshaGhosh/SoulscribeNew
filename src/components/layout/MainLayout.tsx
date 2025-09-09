@@ -61,7 +61,7 @@ export const MainLayout = () => {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen">
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
       <main className="flex-1 overflow-auto">
         {renderContent()}
