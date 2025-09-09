@@ -51,15 +51,6 @@ export const MainLayout = () => {
         return <AnalyticsDashboard />;
       case "profile":
         return <ProfilePage />;
-      case "settings":
-        return (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center space-y-4">
-              <h2 className="text-2xl font-semibold text-foreground">Settings</h2>
-              <p className="text-muted-foreground">Coming soon...</p>
-            </div>
-          </div>
-        );
       default:
         return <HomePage onNavigate={setActiveTab} />;
     }
