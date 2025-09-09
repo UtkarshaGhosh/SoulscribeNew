@@ -13,15 +13,19 @@ export const MainLayout = () => {
   // Dynamic background based on mood
   useEffect(() => {
     const body = document.body;
+    // Remove any existing mood- classes without clobbering other classes
+    Array.from(body.classList)
+      .filter((c) => c.startsWith('mood-'))
+      .forEach((c) => body.classList.remove(c));
+
     if (currentMood) {
-      // Add mood-based class for dynamic styling
-      body.className = `mood-${currentMood}`;
-    } else {
-      body.className = "";
+      body.classList.add(`mood-${currentMood}`);
     }
-    
+
     return () => {
-      body.className = "";
+      Array.from(body.classList)
+        .filter((c) => c.startsWith('mood-'))
+        .forEach((c) => body.classList.remove(c));
     };
   }, [currentMood]);
 
