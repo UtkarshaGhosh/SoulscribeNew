@@ -50,8 +50,56 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
     }
   }, [history]);
 
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const callAI = async (history: Message[], mood?: Mood) => {
+    try {
+      setIsGenerating(true);
+      const payload = { messages: history.slice(-10), mood };
+      const resp = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (resp.status === 404) {
+        console.error('AI endpoint not found (404): /api/generate');
+        return "The AI service is not available right now.";
+      }
+      if (resp.status === 401) {
+        console.error('AI endpoint unauthorized (401)');
+        return "The AI service is unauthorized. Please check server configuration.";
+      }
+
+      // Read body once as text and parse to avoid 'body stream already read' errors
+      const text = await resp.text();
+      let json: any = {};
+      if (text) {
+        try {
+          json = JSON.parse(text);
+        } catch (e) {
+          console.error('Failed to parse AI response text', e, text);
+          return "I'm having trouble understanding the AI response.";
+        }
+      }
+
+      const reply = json?.reply ?? null;
+      if (!reply) {
+        console.error('No reply field in AI response', json);
+        return "The AI did not return a reply.";
+      }
+
+      return reply as string;
+    } catch (err) {
+      console.error('AI call failed', err);
+      return "I'm having trouble responding right now. Please try again later.";
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() || isGenerating) return;
 
     const newMessage: Message = {
       id: Date.now().toString(),
@@ -64,25 +112,18 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
     addMessage.mutate({ message: inputMessage, is_user: true });
     setInputMessage("");
 
-    setTimeout(() => {
-      const responses = [
-        "I understand how you're feeling. Can you tell me more about what's been on your mind?",
-        "Thank you for sharing that with me. It sounds like you're dealing with a lot right now.",
-        "Those feelings are completely valid. Have you tried any breathing exercises when you feel this way?",
-        "It's great that you're reaching out. Remember, taking care of your mental health is a sign of strength.",
-        "I hear you. Sometimes it can help to journal about these thoughts. Would you like me to suggest some prompts?",
-      ];
+    // build history for AI
+    const historyForAI = [...messages, newMessage];
+    const aiText = await callAI(historyForAI);
 
-      const aiText = responses[Math.floor(Math.random() * responses.length)];
-      const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        content: aiText,
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, aiResponse]);
-      addMessage.mutate({ message: aiText, is_user: false });
-    }, 800);
+    const aiResponse: Message = {
+      id: (Date.now() + 1).toString(),
+      content: aiText,
+      isUser: false,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, aiResponse]);
+    addMessage.mutate({ message: aiText, is_user: false });
   };
 
   const handleMoodSelect = (mood: Mood) => {
@@ -149,21 +190,29 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
 
       {/* Input */}
       <div className="p-6 border-t border-border">
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-end">
           <Input
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             placeholder="Type a message..."
-            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+              }
+            }}
+            disabled={isGenerating}
             className="bg-input border-border focus:border-primary focus:ring-primary"
           />
-          <Button 
+          <Button
             onClick={handleSendMessage}
             className="bg-gradient-primary hover:shadow-glow transition-smooth"
+            disabled={isGenerating}
           >
-            <Send className="w-4 h-4" />
+            {isGenerating ? '...' : <Send className="w-4 h-4" />}
           </Button>
         </div>
+        {isGenerating && <div className="text-sm text-muted-foreground mt-2">Assistant is typing...</div>}
       </div>
     </div>
   );
