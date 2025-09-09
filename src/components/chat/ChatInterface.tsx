@@ -4,8 +4,9 @@ import { Send, Trash2 } from "lucide-react";
 import { MoodSelector } from "./MoodSelector";
 import { ChatMessage } from "./ChatMessage";
 import { useAddChatMessage, useChatMessages, useAddMoodEntry, useClearChat } from "@/hooks/useSupabaseData";
+import { supabase } from "@/integrations/supabase/client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 export type Mood = "happy" | "sad" | "angry" | "anxious" | "calm" | "stressed" | "excited" | "lonely" | "frustrated" | "motivated";
 
 interface Message {
@@ -48,6 +49,45 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
   const addMood = useAddMoodEntry();
   const clearChat = useClearChat();
   const [clearCutoff, setClearCutoff] = useState<Date | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  const cutoffKey = useMemo(() => (userId ? `chatClearCutoff:${userId}` : null), [userId]);
+
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (!mounted) return;
+      setUserId(data.user?.id ?? null);
+      const key = data.user?.id ? `chatClearCutoff:${data.user.id}` : null;
+      if (key) {
+        const stored = localStorage.getItem(key);
+        if (stored) {
+          const d = new Date(stored);
+          if (!isNaN(d.getTime())) setClearCutoff(d);
+        }
+      }
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      const uid = session?.user?.id ?? null;
+      setUserId(uid);
+      if (uid) {
+        const key = `chatClearCutoff:${uid}`;
+        const stored = localStorage.getItem(key);
+        if (stored) {
+          const d = new Date(stored);
+          if (!isNaN(d.getTime())) setClearCutoff(d);
+        } else {
+          setClearCutoff(null);
+        }
+      } else {
+        setClearCutoff(null);
+      }
+    });
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     if (history) {
@@ -90,7 +130,6 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
         return "The AI service is unauthorized. Please check server configuration.";
       }
 
-      // Read body once as text and parse to avoid 'body stream already read' errors
       const text = await resp.text();
       let json: any = {};
       if (text) {
@@ -131,7 +170,6 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
     addMessage.mutate({ message: inputMessage, is_user: true });
     setInputMessage("");
 
-    // build history for AI
     const historyForAI = [...messages, newMessage];
     const aiText = await callAI(historyForAI);
 
@@ -190,6 +228,9 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
   const handleClearChat = async () => {
     const now = new Date();
     setClearCutoff(now);
+    if (cutoffKey) {
+      localStorage.setItem(cutoffKey, now.toISOString());
+    }
     try {
       await clearChat.mutateAsync();
     } catch (e) {
@@ -200,7 +241,6 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
 
   return (
     <div className="flex flex-col h-full max-w-4xl mx-auto">
-      {/* Chat Header */}
       <div className="p-6 border-b border-border flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-foreground">AI Therapy Session</h1>
@@ -211,19 +251,16 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
         </Button>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map((message) => (
           <ChatMessage key={message.id} message={message} />
         ))}
       </div>
 
-      {/* Mood Selector */}
       <div className="p-4 border-t border-border">
         <MoodSelector onMoodSelect={handleMoodSelect} />
       </div>
 
-      {/* Input */}
       <div className="p-6 border-t border-border">
         <div className="flex gap-3 items-end">
           <Input
