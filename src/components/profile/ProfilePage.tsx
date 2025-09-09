@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
 import { User, Heart, Target, Calendar } from "lucide-react";
 import { useProfile, useUpsertProfile, useMoodEntries } from "@/hooks/useSupabaseData";
 
