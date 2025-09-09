@@ -105,7 +105,7 @@ export function useWellness(lastNDays = 7) {
         const fromDb = dbByDate.get(date);
         if (fromDb && fromDb.wellbeing_score != null && fromDb.energy_level != null && fromDb.resilience_score != null) return fromDb;
         const items = byDateMoods.get(date)!;
-        if (!items.length) return fromDb ?? { date, wellbeing_score: 0, energy_level: 0, resilience_score: 0, productivity_score: 0, emotional_volatility: 0, id: "derived-"+date, user_id: "", created_at: new Date().toISOString(), updated_at: new Date().toISOString(), wellbeing_score: 0 as any } as any;
+        if (!items.length) return fromDb ?? { date, wellbeing_score: 0, energy_level: 0, resilience_score: 0, productivity_score: 0, emotional_volatility: 0, id: "derived-"+date, user_id: "", created_at: new Date().toISOString(), updated_at: new Date().toISOString() } as any;
         const ws: number[] = [];
         const es: number[] = [];
         items.forEach(r => {
