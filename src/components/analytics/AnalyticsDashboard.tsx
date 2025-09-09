@@ -57,7 +57,7 @@ export const AnalyticsDashboard = () => {
             <Target className="h-4 w-4 text-secondary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-secondary">{currentResilience}</div>
+            <div className="text-2xl font-bold text-secondary">{currentResilience}%</div>
             <p className="text-xs text-muted-foreground mt-1">Stress coping ability</p>
           </CardContent>
         </Card>
