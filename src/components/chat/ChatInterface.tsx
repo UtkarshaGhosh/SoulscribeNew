@@ -41,8 +41,20 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
     } else {
       setMessages([
         {
+          id: "warning",
+          content: "Caution: I am an AI assistant and not a licensed mental health professional. This chat is for supportive, general guidance only. If you are in crisis or have concerns about your safety, please contact local emergency services or a trusted professional immediately.",
+          isUser: false,
+          timestamp: new Date(),
+        },
+        {
+          id: "recommend",
+          content: "This AI can provide coping strategies and listening, but it is not a substitute for professional therapy. Consider reaching out to a qualified mental health professional for diagnosis or long-term care.",
+          isUser: false,
+          timestamp: new Date(),
+        },
+        {
           id: "welcome",
-          content: "Hello! I'm your AI Therapist. How can I help you today?",
+          content: "Hello! I'm your AI Therapist. I'm here to listen and offer supportive suggestions. How can I help you today?",
           isUser: false,
           timestamp: new Date(),
         },
