@@ -69,7 +69,6 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
   }, [history, clearCutoff]);
 
   const [isGenerating, setIsGenerating] = useState(false);
-  const [clearCutoff, setClearCutoff] = useState<Date | null>(null);
 
   const callAI = async (history: Message[], mood?: Mood) => {
     try {
