@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 import { MoodSelector } from "./MoodSelector";
 import { ChatMessage } from "./ChatMessage";
+import { useAddChatMessage, useChatMessages, useAddMoodEntry } from "@/hooks/useSupabaseData";
 
 export type Mood = "happy" | "sad" | "angry" | "anxious" | "calm" | "stressed" | "excited" | "lonely" | "frustrated" | "motivated";
 
@@ -20,17 +21,36 @@ interface ChatInterfaceProps {
 }
 
 export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      content: "Hello! I'm your AI Therapist. How can I help you today?",
-      isUser: false,
-      timestamp: new Date(),
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
+  const { data: history } = useChatMessages();
+  const addMessage = useAddChatMessage();
+  const addMood = useAddMoodEntry();
 
-  const handleSendMessage = () => {
+  useEffect(() => {
+    if (history && history.length > 0) {
+      setMessages(
+        history.map((m) => ({
+          id: m.id,
+          content: m.message,
+          isUser: m.is_user,
+          mood: m.mood_context ?? undefined,
+          timestamp: new Date(m.created_at),
+        }))
+      );
+    } else {
+      setMessages([
+        {
+          id: "welcome",
+          content: "Hello! I'm your AI Therapist. How can I help you today?",
+          isUser: false,
+          timestamp: new Date(),
+        },
+      ]);
+    }
+  }, [history]);
+
+  const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
 
     const newMessage: Message = {
@@ -40,10 +60,10 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, newMessage]);
+    setMessages((prev) => [...prev, newMessage]);
+    addMessage.mutate({ message: inputMessage, is_user: true });
     setInputMessage("");
 
-    // Simulate AI response
     setTimeout(() => {
       const responses = [
         "I understand how you're feeling. Can you tell me more about what's been on your mind?",
@@ -52,21 +72,22 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
         "It's great that you're reaching out. Remember, taking care of your mental health is a sign of strength.",
         "I hear you. Sometimes it can help to journal about these thoughts. Would you like me to suggest some prompts?",
       ];
-      
+
+      const aiText = responses[Math.floor(Math.random() * responses.length)];
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        content: responses[Math.floor(Math.random() * responses.length)],
+        content: aiText,
         isUser: false,
         timestamp: new Date(),
       };
-      
-      setMessages(prev => [...prev, aiResponse]);
-    }, 1000);
+      setMessages((prev) => [...prev, aiResponse]);
+      addMessage.mutate({ message: aiText, is_user: false });
+    }, 800);
   };
 
   const handleMoodSelect = (mood: Mood) => {
     onMoodChange?.(mood);
-    
+
     const moodMessage: Message = {
       id: Date.now().toString(),
       content: `I'm feeling ${mood} right now.`,
@@ -74,10 +95,11 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
       mood,
       timestamp: new Date(),
     };
-    
-    setMessages(prev => [...prev, moodMessage]);
 
-    // AI response based on mood
+    setMessages((prev) => [...prev, moodMessage]);
+    addMood.mutate({ mood });
+    addMessage.mutate({ message: moodMessage.content, is_user: true, mood_context: mood });
+
     setTimeout(() => {
       const moodResponses = {
         happy: "That's wonderful to hear! What's bringing you joy today?",
@@ -89,18 +111,20 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
         excited: "Your excitement is contagious! Tell me about what's got you feeling so energized.",
         lonely: "Loneliness can be painful. Remember that you're not alone - I'm here with you.",
         frustrated: "Frustration is a natural response. Let's explore what's been challenging you.",
-        motivated: "I love your motivation! What goals are you working toward right now?"
-      };
+        motivated: "I love your motivation! What goals are you working toward right now?",
+      } as const;
 
+      const aiText = moodResponses[mood];
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        content: moodResponses[mood],
+        content: aiText,
         isUser: false,
         timestamp: new Date(),
       };
-      
-      setMessages(prev => [...prev, aiResponse]);
-    }, 1000);
+
+      setMessages((prev) => [...prev, aiResponse]);
+      addMessage.mutate({ message: aiText, is_user: false, mood_context: mood });
+    }, 800);
   };
 
   return (
