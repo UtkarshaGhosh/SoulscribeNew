@@ -63,10 +63,8 @@ export function useClearChat() {
       qc.setQueryData(["chat_messages"], []);
       return { previous } as { previous: unknown };
     },
-    onError: (_err, _vars, context) => {
-      if (context?.previous !== undefined) {
-        qc.setQueryData(["chat_messages"], context.previous);
-      }
+    onError: () => {
+      // Keep cache cleared to avoid UI restoring old messages on navigation
     },
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ["chat_messages"] });
