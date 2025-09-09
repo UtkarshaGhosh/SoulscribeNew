@@ -16,10 +16,15 @@ export const AnalyticsDashboard = () => {
 
   // Re-derive datasets from the fetched wellness data
   const wellbeingData = wellness.map((w) => ({ date: w.date, wellbeing: Number(w.wellbeing_score ?? 0), energy: Number(w.energy_level ?? 0) }));
+  const productivityData = wellness.map((w) => ({ date: w.date, productivity: Number(w.productivity_score ?? 0) }));
+  const volatilityData = wellness.map((w) => ({ date: w.date, volatility: Number(w.emotional_volatility ?? 0) }));
   const resilienceData = wellness.map((w) => ({ date: w.date, resilience: Math.round(Number(w.resilience_score ?? 0) * 10) }));
   const avgWellbeing = wellbeingData.length ? wellbeingData.reduce((acc, curr) => acc + curr.wellbeing, 0) / wellbeingData.length : 0;
   const avgEnergy = wellbeingData.length ? wellbeingData.reduce((acc, curr) => acc + curr.energy, 0) / wellbeingData.length : 0;
+  const avgProductivity = productivityData.length ? productivityData.reduce((acc, curr) => acc + curr.productivity, 0) / productivityData.length : 0;
+  const avgVolatility = volatilityData.length ? volatilityData.reduce((acc, curr) => acc + curr.volatility, 0) / volatilityData.length : 0;
   const currentResilience = resilienceData.length ? resilienceData[resilienceData.length - 1].resilience : 0;
+  const currentVolatility = volatilityData.length ? volatilityData[volatilityData.length - 1].volatility : 0;
 
   // Realtime subscriptions to keep analytics live
   useEffect(() => {
