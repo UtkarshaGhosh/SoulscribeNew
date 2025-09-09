@@ -11,13 +11,51 @@ function formatDate(d: Date) {
 }
 
 export const AnalyticsDashboard = () => {
-  const { data: wellness = [] } = useWellness(7);
+  const qc = useQueryClient();
+  const { data: wellness = [], refetch } = useWellness(7);
 
+  // Re-derive datasets from the fetched wellness data
   const wellbeingData = wellness.map((w) => ({ date: w.date, wellbeing: Number(w.wellbeing_score ?? 0), energy: Number(w.energy_level ?? 0) }));
-  const resilienceData = wellness.map((w) => ({ date: w.date, resilience: Number(w.resilience_score ?? 0) * 10 }));
+  const resilienceData = wellness.map((w) => ({ date: w.date, resilience: Math.round(Number(w.resilience_score ?? 0) * 10) }));
   const avgWellbeing = wellbeingData.length ? wellbeingData.reduce((acc, curr) => acc + curr.wellbeing, 0) / wellbeingData.length : 0;
   const avgEnergy = wellbeingData.length ? wellbeingData.reduce((acc, curr) => acc + curr.energy, 0) / wellbeingData.length : 0;
   const currentResilience = resilienceData.length ? resilienceData[resilienceData.length - 1].resilience : 0;
+
+  // Realtime subscriptions to keep analytics live
+  useEffect(() => {
+    // Listen to wellness_metrics and mood_entries changes
+    const wellnessSub = supabase
+      .channel('public:wellness_metrics')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'wellness_metrics' }, () => {
+        qc.invalidateQueries({ queryKey: ['wellness'] });
+        // also trigger immediate refetch
+        refetch();
+      })
+      .subscribe();
+
+    const moodSub = supabase
+      .channel('public:mood_entries')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mood_entries' }, () => {
+        qc.invalidateQueries({ queryKey: ['wellness'] });
+        refetch();
+      })
+      .subscribe();
+
+    return () => {
+      try {
+        supabase.removeChannel(wellnessSub);
+      } catch (e) {}
+      try {
+        supabase.removeChannel(moodSub);
+      } catch (e) {}
+    };
+  }, [qc, refetch]);
+
+  const getResilienceClass = (r: number) => {
+    if (r >= 75) return 'text-primary';
+    if (r >= 40) return 'text-accent';
+    return 'text-destructive';
+  };
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto p-6">
