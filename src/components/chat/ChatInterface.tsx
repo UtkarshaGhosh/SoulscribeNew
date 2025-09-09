@@ -163,21 +163,29 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
 
       {/* Input */}
       <div className="p-6 border-t border-border">
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-end">
           <Input
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             placeholder="Type a message..."
-            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+              }
+            }}
+            disabled={isGenerating}
             className="bg-input border-border focus:border-primary focus:ring-primary"
           />
-          <Button 
+          <Button
             onClick={handleSendMessage}
             className="bg-gradient-primary hover:shadow-glow transition-smooth"
+            disabled={isGenerating}
           >
-            <Send className="w-4 h-4" />
+            {isGenerating ? '...' : <Send className="w-4 h-4" />}
           </Button>
         </div>
+        {isGenerating && <div className="text-sm text-muted-foreground mt-2">Assistant is typing...</div>}
       </div>
     </div>
   );
