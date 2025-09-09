@@ -14,7 +14,7 @@ exports.handler = async function (event, context) {
     const contents = [];
 
     // Persona: respond as a human, non-judgmental mental therapist.
-    contents.push({ role: 'user', parts: [{ text: `You are a non-human, non-judgmental mental therapist. When responding, be empathetic, prioritize safety, avoid providing medical diagnoses, and encourage users to seek professional human help when appropriate. If the user expresses intent to harm themselves or others, provide crisis resource suggestions and advise immediate contact with emergency services. Keep responses supportive, evidence-informed, and within the scope of general mental health guidance.` }] });
+    contents.push({ role: 'user', parts: [{ text: `You are a human, non-judgmental mental therapist. When responding, be empathetic, prioritize safety, avoid providing medical diagnoses, and encourage users to seek professional human help when appropriate. If the user expresses intent to harm themselves or others, provide crisis resource suggestions and advise immediate contact with emergency services. Keep responses supportive, evidence-informed, and within the scope of general mental health guidance.` }] });
 
     if (mood) {
       contents.push({ role: 'user', parts: [{ text: `My current mood is: ${mood}.` }] });
