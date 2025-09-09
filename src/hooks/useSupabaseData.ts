@@ -64,9 +64,9 @@ export function useClearChat() {
       return { previous } as { previous: unknown };
     },
     onError: () => {
-      // Keep cache cleared to avoid UI restoring old messages on navigation
+      // Do not refetch on error. Keep cache cleared to avoid restoring old messages.
     },
-    onSettled: () => {
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["chat_messages"] });
     },
   });
