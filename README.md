@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Soulscribe</title>
+  
 
-  <h1>✨ Soulscribe</h1>
-  <p> class="badge">React + Vite + TypeScript + Tailwind + shadcn-ui </p>
+  <h1>✨ Soulscribe</h>
 
   <p><strong>Soulscribe</strong> is a modern web application built with <em>React</em>, <em>Vite</em>, and <em>TypeScript</em>, styled using <em>TailwindCSS</em> and <em>shadcn-ui</em>. 
   It is scaffolded for seamless integration with Supabase , making it easy to build and extend full-stack applications.</p>
