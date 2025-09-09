@@ -13,7 +13,7 @@ export const AnalyticsDashboard = () => {
   const { data: moodDist = [] } = useMoodDistribution(formatDate(today));
 
   const wellbeingData = wellness.map((w) => ({ date: w.date, wellbeing: Number(w.wellbeing_score ?? 0), energy: Number(w.energy_level ?? 0) }));
-  const resilienceData = wellness.map((w) => ({ date: w.date, resilience: Number(w.resilience_score ?? 0) }));
+  const resilienceData = wellness.map((w) => ({ date: w.date, resilience: Number(w.resilience_score ?? 0) * 10 }));
   const avgWellbeing = wellbeingData.length ? wellbeingData.reduce((acc, curr) => acc + curr.wellbeing, 0) / wellbeingData.length : 0;
   const avgEnergy = wellbeingData.length ? wellbeingData.reduce((acc, curr) => acc + curr.energy, 0) / wellbeingData.length : 0;
   const currentResilience = resilienceData.length ? resilienceData[resilienceData.length - 1].resilience : 0;
