@@ -61,21 +61,35 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      let json: any;
-      try {
-        json = await resp.json();
-      } catch (err) {
-        // Sometimes the body stream may already be read by middleware or proxies.
-        // Try to recover by reading text and parsing.
+
+      if (resp.status === 404) {
+        console.error('AI endpoint not found (404): /api/generate');
+        return "The AI service is not available right now.";
+      }
+      if (resp.status === 401) {
+        console.error('AI endpoint unauthorized (401)');
+        return "The AI service is unauthorized. Please check server configuration.";
+      }
+
+      // Read body once as text and parse to avoid 'body stream already read' errors
+      const text = await resp.text();
+      let json: any = {};
+      if (text) {
         try {
-          const txt = await resp.text();
-          json = txt ? JSON.parse(txt) : {};
-        } catch (err2) {
-          console.error('Failed to parse AI response', err, err2);
-          throw err2 || err;
+          json = JSON.parse(text);
+        } catch (e) {
+          console.error('Failed to parse AI response text', e, text);
+          return "I'm having trouble understanding the AI response.";
         }
       }
-      return json.reply as string;
+
+      const reply = json?.reply ?? null;
+      if (!reply) {
+        console.error('No reply field in AI response', json);
+        return "The AI did not return a reply.";
+      }
+
+      return reply as string;
     } catch (err) {
       console.error('AI call failed', err);
       return "I'm having trouble responding right now. Please try again later.";
