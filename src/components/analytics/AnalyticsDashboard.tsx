@@ -105,6 +105,28 @@ export const AnalyticsDashboard = () => {
           </CardContent>
         </Card>
 
+        <Card className="bg-gradient-card border-border shadow-soft">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Productivity Score</CardTitle>
+            <Activity className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-primary">{avgProductivity.toFixed(1)}/10</div>
+            <p className="text-xs text-muted-foreground mt-1">Average productivity (derived)</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-card border-border shadow-soft">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Emotional Volatility</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-destructive" />
+          </CardHeader>
+          <CardContent>
+            <div className={`text-2xl font-bold ${currentVolatility <= 2 ? 'text-primary' : currentVolatility <=5 ? 'text-accent' : 'text-destructive'}`}>{avgVolatility.toFixed(1)}</div>
+            <p className="text-xs text-muted-foreground mt-1">Lower is steadier; higher indicates more fluctuation</p>
+          </CardContent>
+        </Card>
+
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
