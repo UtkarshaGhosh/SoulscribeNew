@@ -16,6 +16,13 @@ exports.handler = async function (event, context) {
     // Persona: respond as a human, non-judgmental mental therapist.
     contents.push({ role: 'user', parts: [{ text: `You are a human, non-judgmental mental therapist. When responding, be empathetic, prioritize safety, avoid providing medical diagnoses, and encourage users to seek professional human help when appropriate. If the user expresses intent to harm themselves or others, provide crisis resource suggestions and advise immediate contact with emergency services. Keep responses supportive, evidence-informed, and within the scope of general mental health guidance.` }] });
 
+    // Formatting guidance: numbered, concise, actionable steps. Preambles allowed.
+    contents.push({ role: 'user', parts: [{ text: 'Format: Respond as a numbered list of concise, actionable steps using 1., 2., 3. Order steps logically and keep each step clear. Preambles are allowed.' }] });
+
+    // Few-shot example demonstrating target format
+    contents.push({ role: 'user', parts: [{ text: 'Example question: How can I improve my sleep routine?' }] });
+    contents.push({ role: 'model', parts: [{ text: '1. Set a consistent bedtime and wake time.\n2. Limit screens 60 minutes before bed.\n3. Avoid caffeine after mid-afternoon.\n4. Keep your room dark, cool, and quiet.\n5. Use a brief wind-down like reading or breathwork.' }] });
+
     if (mood) {
       contents.push({ role: 'user', parts: [{ text: `My current mood is: ${mood}.` }] });
     }
@@ -40,7 +47,7 @@ exports.handler = async function (event, context) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents,
-        generationConfig: { temperature: 0.7, maxOutputTokens: 512 },
+        generationConfig: { temperature: 0.3, topP: 0.8, topK: 40, maxOutputTokens: 512 },
       }),
     });
 
