@@ -1697,9 +1697,9 @@ body.theme-energized .chat-interface { background-color: rgba(117,94,77,0.85); b
 
 /* Anxious-specific overrides: emotion card gradient and buttons */
 body.theme-anxious .emotion-card-stack .emotion-card,
-body.theme-anxious .card-stack-item {
-  background: linear-gradient(180deg, #0A1417 0%, #0A282B 100%);
-  border: 1px solid color-mix(in srgb, #0A1417 25%, transparent);
+  body.theme-anxious .card-stack-item {
+  background: linear-gradient(180deg, var(--anxious-ecard-dark, #0b3a2a) 0%, var(--anxious-ecard-darker, #04251c) 100%);
+  border: 1px solid color-mix(in srgb, var(--anxious-ecard-dark, #0b3a2a) 28%, transparent);
   color: var(--text-primary);
 }
 body.theme-anxious .send-fly-button,
