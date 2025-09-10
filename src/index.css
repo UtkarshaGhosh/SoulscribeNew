@@ -1906,6 +1906,37 @@ body.theme-calm .bg-scene .blob-c {
   background: radial-gradient(circle, rgba(6,18,54,0.35), transparent 60%);
 }
 
+/* Motivated theme (theme-grounding): lighter greens, blues and contrasting accents */
+body.theme-grounding {
+  animation: none !important;
+  --mg-light1: rgba(191,247,224,0.95); /* pale mint */
+  --mg-light2: rgba(125,211,252,0.95); /* light sky blue */
+  --mg-accent: rgba(255,183,178,0.9); /* soft coral contrast */
+}
+
+body.theme-grounding .bg-scene .blob-a {
+  background: radial-gradient(circle at 22% 28%, var(--mg-light1), color-mix(in srgb, var(--mg-light2) 40%, transparent) 45%, transparent 74%);
+  opacity: 0.9;
+  filter: blur(44px) saturate(130%);
+  mix-blend-mode: screen;
+}
+
+body.theme-grounding .bg-scene .blob-b {
+  background: radial-gradient(circle at 78% 72%, color-mix(in srgb, var(--mg-light2) 66%, white 34%), color-mix(in srgb, var(--mg-light1) 46%, transparent) 50%, transparent 78%);
+  opacity: 0.78;
+  animation-duration: 34s;
+  filter: blur(40px) saturate(120%);
+  mix-blend-mode: screen;
+}
+
+body.theme-grounding .bg-scene .blob-c {
+  background: radial-gradient(circle at 60% 40%, var(--mg-accent), color-mix(in srgb, var(--mg-light2) 32%, white 68%) 45%, transparent 80%);
+  opacity: 0.6;
+  animation-duration: 40s;
+  filter: blur(36px) saturate(115%);
+  mix-blend-mode: screen;
+}
+
 /* Anxious: override LiveBackground blobs with dark green tones (lighter accents for visibility) */
 body.theme-anxious .bg-scene .blob-a {
   background: radial-gradient(circle at 25% 25%, rgba(34,197,94,0.48), rgba(6,95,70,0.28) 42%, transparent 72%);
