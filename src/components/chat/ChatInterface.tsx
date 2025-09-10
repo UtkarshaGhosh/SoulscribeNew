@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Send, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { MoodSelector } from "./MoodSelector";
 import { ChatMessage } from "./ChatMessage";
+import { CardStack } from "./CardStack";
 import { useAddChatMessage, useChatMessages, useAddMoodEntry, useClearChat } from "@/hooks/useSupabaseData";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -318,12 +318,7 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
       </div>
 
       <div className="w-full max-w-6xl">
-        <div className="card-stack-section" data-aos="fade-up" data-aos-duration="1000">
-          {/* Card stack animation */}
-          <div className="card-stack-rows">
-            {/* Use dedicated component to keep tidy */}
-            </div>
-        </div>
+        <CardStack onSelect={handleMoodSelect} />
       </div>
     </div>
   );
