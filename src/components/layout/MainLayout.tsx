@@ -5,40 +5,28 @@ import { ChatInterface } from "../chat/ChatInterface";
 import { AnalyticsDashboard } from "../analytics/AnalyticsDashboard";
 import { ProfilePage } from "../profile/ProfilePage";
 import type { Mood } from "../chat/ChatInterface";
+import { applyThemeForMood } from "@/lib/moodTheme";
 
 export const MainLayout = () => {
   const [activeTab, setActiveTab] = useState("home");
   const [currentMood, setCurrentMood] = useState<Mood | null>(null);
 
-  // Dynamic background based on mood
+  // Apply theme class based on current mood
   useEffect(() => {
-    const body = document.body;
-    // Remove any existing mood- classes without clobbering other classes
-    Array.from(body.classList)
-      .filter((c) => c.startsWith('mood-'))
-      .forEach((c) => body.classList.remove(c));
-
-    if (currentMood) {
-      body.classList.add(`mood-${currentMood}`);
-    }
-
-    return () => {
-      Array.from(body.classList)
-        .filter((c) => c.startsWith('mood-'))
-        .forEach((c) => body.classList.remove(c));
-    };
+    applyThemeForMood(currentMood);
+    return () => applyThemeForMood(null);
   }, [currentMood]);
 
   const handleMoodChange = (mood: Mood) => {
     setCurrentMood(mood);
-    
+
     // Store mood with timestamp
     const moodEntry = {
       mood,
       timestamp: new Date().toISOString(),
       date: new Date().toDateString(),
     };
-    
+
     // Save to localStorage for persistence
     const existingMoods = JSON.parse(localStorage.getItem("soulscribe-moods") || "[]");
     existingMoods.push(moodEntry);
