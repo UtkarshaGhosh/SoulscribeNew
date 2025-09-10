@@ -244,8 +244,8 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
   };
 
   return (
-    <div className="w-full flex flex-col items-center gap-8">
-      <div className="flex flex-col w-full max-w-6xl rounded-lg h-[640px] overflow-hidden glass-panel">
+    <div className="w-full flex flex-col items-center gap-8 px-6">
+      <div className="flex flex-col w-full max-w-6xl mx-auto rounded-lg h-[640px] overflow-hidden glass-panel">
         <div className="p-4 border-b border-border flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold text-foreground">AI Therapy Session</h1>
