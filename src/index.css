@@ -25,13 +25,13 @@
 }
 
 .theme-calm {
-  --bg-primary: #0a0b12;
-  --bg-secondary: #111423;
-  --text-primary: #e8f0ff;
-  --text-secondary: #9aa6c7;
-  --accent-primary: #7c3aed; /* neon purple */
-  --accent-secondary: #06b6d4; /* cyan */
-  --border-color: rgba(124, 58, 237, 0.25);
+  --bg-primary: #071029;
+  --bg-secondary: #1e0f2f;
+  --text-primary: #fff0f6;
+  --text-secondary: #ffc0d6;
+  --accent-primary: #ffc0cb; /* baby pink */
+  --accent-secondary: #5b21b6; /* dark purple */
+  --border-color: rgba(255,192,203,0.18);
 }
 
 .theme-muted {
@@ -1697,20 +1697,54 @@ body.theme-energized .chat-interface { background-color: rgba(117,94,77,0.85); b
 
 /* Anxious-specific overrides: emotion card gradient and buttons */
 body.theme-anxious .emotion-card-stack .emotion-card,
-body.theme-anxious .card-stack-item {
-  background: linear-gradient(180deg, #0A1417 0%, #0A282B 100%);
-  border: 1px solid color-mix(in srgb, #0A1417 25%, transparent);
+  body.theme-anxious .card-stack-item {
+  background: linear-gradient(180deg, var(--anxious-ecard-dark, #0b3a2a) 0%, var(--anxious-ecard-darker, #04251c) 100%);
+  border: 1px solid color-mix(in srgb, var(--anxious-ecard-dark, #0b3a2a) 28%, transparent);
   color: var(--text-primary);
 }
 body.theme-anxious .send-fly-button,
-body.theme-anxious .reset-theme-button,
-body.theme-anxious .reset-theme-button svg {
+  body.theme-anxious .reset-theme-button,
+  body.theme-anxious .reset-theme-button svg {
   background: var(--send-button-bg, #0a1417);
   border-color: color-mix(in srgb, var(--send-button-bg, #0a1417) 30%, transparent);
   color: white;
 }
 body.theme-anxious .send-fly-button:hover,
 body.theme-anxious .reset-theme-button:hover { filter: brightness(1.03); transform: translateY(-1px); }
+
+/* Anxious mood: use emotion-card gradient colors (dark) and lighter shades for LiveBackground blobs */
+body.theme-anxious {
+  /* Provide variables referencing the emotion card gradient colors for reuse (use dark greens) */
+  --anxious-ecard-dark: #0b3a2a; /* deep forest green */
+  --anxious-ecard-darker: #04251c; /* very dark green/teal */
+}
+
+body.theme-anxious .bg-scene .blob-a {
+  background: radial-gradient(circle at 25% 25%,
+    color-mix(in srgb, var(--anxious-ecard-dark) 36%, white 64%),
+    color-mix(in srgb, var(--anxious-ecard-darker) 56%, white 44%) 40%,
+    transparent 72%);
+  opacity: 0.22;
+  filter: blur(56px);
+}
+
+body.theme-anxious .bg-scene .blob-b {
+  background: radial-gradient(circle at 80% 70%,
+    color-mix(in srgb, var(--anxious-ecard-darker) 28%, white 72%),
+    color-mix(in srgb, var(--anxious-ecard-dark) 46%, white 54%) 45%,
+    transparent 78%);
+  opacity: 0.18;
+  animation-duration: 36s;
+}
+
+body.theme-anxious .bg-scene .blob-c {
+  background: radial-gradient(circle at 60% 40%,
+    color-mix(in srgb, var(--anxious-ecard-dark) 22%, white 78%),
+    color-mix(in srgb, var(--anxious-ecard-darker) 40%, white 60%) 50%,
+    transparent 80%);
+  opacity: 0.14;
+  animation-duration: 42s;
+}
 
 .emotion-card-stack .emotion-card {
   /* Background using a gradient of the theme's darkest shades */
@@ -1807,3 +1841,128 @@ body.theme-anxious .reset-theme-button:hover { filter: brightness(1.03); transfo
 .blob-b { background: radial-gradient(circle, hsl(var(--accent) / .35), transparent 60%); bottom: -12vmax; right: -8vmax; animation-duration: 36s; }
 .blob-c { background: radial-gradient(circle, hsl(var(--primary) / .25), transparent 60%); top: 10vmax; right: 20vmax; animation-duration: 42s; }
 @keyframes floaty { 0%,100% { transform: translate3d(0,0,0) scale(1);} 50% { transform: translate3d(2vmax,-2vmax,0) scale(1.05);} }
+
+/* ============================================= */
+/* ==        Theme: Stressed (theme-stressed)  == */
+/* ============================================= */
+.theme-stressed {
+  --bg-primary: #0a102a;
+  --bg-secondary: #0b122f;
+  --text-primary: #dbeafe; /* blue-100 */
+  --text-secondary: #93c5fd; /* blue-300 */
+  --accent-primary: #60a5fa; /* blue-400 */
+  --accent-secondary: #0ea5e9; /* sky-500 */
+  --border-color: rgba(96,165,250,0.25);
+}
+
+/* Optional: subtle radial background similar to frustrated, but blue */
+body.theme-stressed {
+  animation: none !important;
+  --color1: #1e3a8a; /* indigo-800 */
+  --color2: #0ea5e9; /* sky-500 */
+  --bg-color: #050816;
+  background: var(--bg-color) !important;
+  background-image:
+    radial-gradient(at 85% 15%, var(--color2) 0px, transparent 55%),
+    radial-gradient(at 10% 90%, var(--color1) 0px, transparent 55%) !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+/* LiveBackground: blue-ish blobs only when stressed */
+body.theme-stressed .bg-scene .blob-a {
+  background: radial-gradient(circle at 30% 30%, rgba(59,130,246,0.55), rgba(29,78,216,0.35) 40%, transparent 60%);
+}
+body.theme-stressed .bg-scene .blob-b {
+  background: radial-gradient(circle, rgba(14,165,233,0.38), transparent 60%);
+}
+body.theme-stressed .bg-scene .blob-c {
+  background: radial-gradient(circle, rgba(99,102,241,0.30), transparent 60%);
+}
+
+/* Calm theme radial background and LiveBackground blobs */
+body.theme-calm {
+  animation: none !important;
+  --color1: #2b0b3a; /* dark purple */
+  --color2: #061236; /* dark blue */
+  --color3: #ffc0cb; /* baby pink */
+  --bg-color: #040512;
+  background: var(--bg-color) !important;
+  background-image:
+    radial-gradient(at 20% 20%, var(--color3) 0px, transparent 45%),
+    radial-gradient(at 80% 80%, var(--color1) 0px, transparent 55%),
+    radial-gradient(at 50% 60%, var(--color2) 0px, transparent 65%) !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+body.theme-calm .bg-scene .blob-a {
+  background: radial-gradient(circle at 30% 30%, rgba(255,192,203,0.5), rgba(139,92,246,0.25) 35%, transparent 60%);
+}
+body.theme-calm .bg-scene .blob-b {
+  background: radial-gradient(circle, rgba(59,48,151,0.32), transparent 60%);
+}
+body.theme-calm .bg-scene .blob-c {
+  background: radial-gradient(circle, rgba(6,18,54,0.35), transparent 60%);
+}
+
+/* Motivated theme (theme-grounding): lighter greens, blues and contrasting accents */
+body.theme-grounding {
+  animation: none !important;
+  --mg-light1: rgba(191,247,224,0.95); /* pale mint */
+  --mg-light2: rgba(125,211,252,0.95); /* light sky blue */
+  --mg-accent: rgba(255,183,178,0.9); /* soft coral contrast */
+}
+
+body.theme-grounding .bg-scene .blob-a {
+  background: radial-gradient(circle at 22% 28%, var(--mg-light1), color-mix(in srgb, var(--mg-light2) 40%, transparent) 45%, transparent 74%);
+  opacity: 0.9;
+  filter: blur(44px) saturate(130%);
+  mix-blend-mode: screen;
+}
+
+body.theme-grounding .bg-scene .blob-b {
+  background: radial-gradient(circle at 78% 72%, color-mix(in srgb, var(--mg-light2) 66%, white 34%), color-mix(in srgb, var(--mg-light1) 46%, transparent) 50%, transparent 78%);
+  opacity: 0.78;
+  animation-duration: 34s;
+  filter: blur(40px) saturate(120%);
+  mix-blend-mode: screen;
+}
+
+body.theme-grounding .bg-scene .blob-c {
+  background: radial-gradient(circle at 60% 40%, var(--mg-accent), color-mix(in srgb, var(--mg-light2) 32%, white 68%) 45%, transparent 80%);
+  opacity: 0.6;
+  animation-duration: 40s;
+  filter: blur(36px) saturate(115%);
+  mix-blend-mode: screen;
+}
+
+/* Anxious: override LiveBackground blobs with dark green tones (lighter accents for visibility) */
+body.theme-anxious .bg-scene .blob-a {
+  background: radial-gradient(circle at 25% 25%, rgba(34,197,94,0.48), rgba(6,95,70,0.28) 42%, transparent 72%);
+  opacity: 0.72;
+  filter: blur(48px) saturate(120%);
+  mix-blend-mode: screen;
+}
+
+body.theme-anxious .bg-scene .blob-b {
+  background: radial-gradient(circle at 80% 70%, rgba(16,185,129,0.36), rgba(23,78,66,0.24) 46%, transparent 78%);
+  opacity: 0.56;
+  animation-duration: 36s;
+  filter: blur(44px) saturate(110%);
+  mix-blend-mode: screen;
+}
+
+body.theme-anxious .bg-scene .blob-c {
+  background: radial-gradient(circle at 60% 40%, rgba(5,150,105,0.3), rgba(8,80,64,0.18) 50%, transparent 80%);
+  opacity: 0.42;
+  animation-duration: 42s;
+  filter: blur(40px) saturate(105%);
+  mix-blend-mode: screen;
+}
+
+/* Ensure card-stack items use anxious gradient when anxious theme is active (higher specificity) */
+body.theme-anxious .card-stack-row .card-stack-item {
+  background-image: linear-gradient(163deg, var(--anxious-ecard-dark, #0b3a2a) 0%, var(--anxious-ecard-darker, #04251c) 100%);
+  border-color: color-mix(in srgb, var(--anxious-ecard-dark, #0b3a2a) 28%, transparent);
+}

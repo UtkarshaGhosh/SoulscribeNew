@@ -6,7 +6,7 @@ export const moodToThemeClass: Record<Mood, string> = {
   angry: "theme-angry",
   anxious: "theme-anxious",
   calm: "theme-calm",
-  stressed: "theme-frustrated",
+  stressed: "theme-stressed",
   excited: "theme-energized",
   lonely: "theme-neutral",
   frustrated: "theme-frustrated",
