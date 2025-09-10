@@ -115,33 +115,42 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
     try {
       setIsGenerating(true);
       const payload = { messages: history.slice(-10), mood };
-      // Try primary endpoint first
-      let resp = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
 
-      // Fallbacks: try the Netlify function path directly if /api/generate returns 404
-      if (resp.status === 404) {
+      const primary = import.meta.env.PROD ? '/.netlify/functions/generate' : '/api/generate';
+      const secondary = import.meta.env.PROD ? '/api/generate' : '/.netlify/functions/generate';
+
+      const tryCall = async (url: string) => {
         try {
-          resp = await fetch('/.netlify/functions/generate', {
+          const r = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
           });
+          return r;
         } catch (e) {
-          // ignore and fall through to error handling below
+          return new Response(null, { status: 599, statusText: 'Network Error' });
         }
+      };
+
+      let resp = await tryCall(primary);
+      if (resp.status === 404) {
+        resp = await tryCall(secondary);
       }
 
-      if (resp.status === 404) {
-        console.error('AI endpoint not found (404): /api/generate and /.netlify/functions/generate');
-        return "The AI service is not available right now.";
-      }
-      if (resp.status === 401) {
-        console.error('AI endpoint unauthorized (401)');
-        return "The AI service is unauthorized. Please check server configuration.";
+      if (!resp.ok) {
+        let serverMsg = '';
+        try {
+          const t = await resp.text();
+          if (t) {
+            const j = JSON.parse(t);
+            serverMsg = j?.error || JSON.stringify(j);
+          }
+        } catch {}
+        const code = resp.status;
+        console.error(`AI endpoint error (${code})`, serverMsg || resp.statusText);
+        if (code === 401) return "The AI service is unauthorized. Please check server configuration.";
+        if (code === 404) return "The AI service is not available right now.";
+        return serverMsg || "I'm having trouble responding right now. Please try again later.";
       }
 
       const text = await resp.text();
@@ -158,7 +167,8 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
       const reply = json?.reply ?? null;
       if (!reply) {
         console.error('No reply field in AI response', json);
-        return "The AI did not return a reply.";
+        const serverErr = typeof json?.error === 'string' ? json.error : '';
+        return serverErr || "The AI did not return a reply.";
       }
 
       return reply as string;
