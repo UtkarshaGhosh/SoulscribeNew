@@ -1960,3 +1960,9 @@ body.theme-anxious .bg-scene .blob-c {
   filter: blur(40px) saturate(105%);
   mix-blend-mode: screen;
 }
+
+/* Ensure card-stack items use anxious gradient when anxious theme is active (higher specificity) */
+body.theme-anxious .card-stack-row .card-stack-item {
+  background-image: linear-gradient(163deg, var(--anxious-ecard-dark, #0b3a2a) 0%, var(--anxious-ecard-darker, #04251c) 100%);
+  border-color: color-mix(in srgb, var(--anxious-ecard-dark, #0b3a2a) 28%, transparent);
+}
