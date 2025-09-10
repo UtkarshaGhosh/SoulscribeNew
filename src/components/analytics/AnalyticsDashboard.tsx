@@ -129,23 +129,24 @@ export const AnalyticsDashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis
                     dataKey="date"
-                    stroke="hsl(var(--muted-foreground))"
+                    stroke="#ffffff"
+                    tick={{ fill: '#ffffff' }}
                     tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                   />
-                  <YAxis stroke="hsl(var(--muted-foreground))" domain={[0, 10]} />
+                  <YAxis stroke="#ffffff" tick={{ fill: '#ffffff' }} domain={[0, 10]} />
                   <Line
                     type="monotone"
                     dataKey="wellbeing"
                     stroke="hsl(var(--primary))"
                     strokeWidth={3}
-                    dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
+                    dot={{ fill: "#ffffff", stroke: "#ffffff", strokeWidth: 2, r: 4 }}
                   />
                   <Line
                     type="monotone"
                     dataKey="energy"
                     stroke="hsl(var(--accent))"
                     strokeWidth={3}
-                    dot={{ fill: "hsl(var(--accent))", strokeWidth: 2, r: 4 }}
+                    dot={{ fill: "#ffffff", stroke: "#ffffff", strokeWidth: 2, r: 4 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -166,16 +167,17 @@ export const AnalyticsDashboard = () => {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis
                   dataKey="date"
-                  stroke="hsl(var(--muted-foreground))"
+                  stroke="#ffffff"
+                  tick={{ fill: '#ffffff' }}
                   tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 />
-                <YAxis stroke="hsl(var(--muted-foreground))" domain={[0, 100]} tickFormatter={(v)=>`${v}%`} />
+                <YAxis stroke="#ffffff" tick={{ fill: '#ffffff' }} domain={[0, 100]} tickFormatter={(v)=>`${v}%`} />
                 <Line
                   type="monotone"
                   dataKey="resilience"
                   stroke={resilienceStroke}
                   strokeWidth={3}
-                  dot={{ fill: resilienceStroke, strokeWidth: 2, r: 5 }}
+                  dot={{ fill: "#ffffff", stroke: "#ffffff", strokeWidth: 2, r: 5 }}
                 />
               </LineChart>
             </ResponsiveContainer>
