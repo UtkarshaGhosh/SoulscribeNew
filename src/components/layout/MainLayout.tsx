@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { HomePage } from "../home/HomePage";
 import { ChatInterface } from "../chat/ChatInterface";
 import { AnalyticsDashboard } from "../analytics/AnalyticsDashboard";
 import { ProfilePage } from "../profile/ProfilePage";
+import LiveBackground from "@/components/visual/LiveBackground";
 import type { Mood } from "../chat/ChatInterface";
 import { applyThemeForMood } from "@/lib/moodTheme";
 
