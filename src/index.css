@@ -1703,14 +1703,48 @@ body.theme-anxious .card-stack-item {
   color: var(--text-primary);
 }
 body.theme-anxious .send-fly-button,
-body.theme-anxious .reset-theme-button,
-body.theme-anxious .reset-theme-button svg {
+  body.theme-anxious .reset-theme-button,
+  body.theme-anxious .reset-theme-button svg {
   background: var(--send-button-bg, #0a1417);
   border-color: color-mix(in srgb, var(--send-button-bg, #0a1417) 30%, transparent);
   color: white;
 }
 body.theme-anxious .send-fly-button:hover,
 body.theme-anxious .reset-theme-button:hover { filter: brightness(1.03); transform: translateY(-1px); }
+
+/* Anxious mood: use emotion-card gradient colors (dark) and lighter shades for LiveBackground blobs */
+body.theme-anxious {
+  /* Provide variables referencing the emotion card gradient colors for reuse */
+  --anxious-ecard-dark: #0A1417; /* emotion card start */
+  --anxious-ecard-darker: #0A282B; /* emotion card end */
+}
+
+body.theme-anxious .bg-scene .blob-a {
+  background: radial-gradient(circle at 25% 25%,
+    color-mix(in srgb, var(--anxious-ecard-dark) 36%, white 64%),
+    color-mix(in srgb, var(--anxious-ecard-darker) 56%, white 44%) 40%,
+    transparent 72%);
+  opacity: 0.22;
+  filter: blur(56px);
+}
+
+body.theme-anxious .bg-scene .blob-b {
+  background: radial-gradient(circle at 80% 70%,
+    color-mix(in srgb, var(--anxious-ecard-darker) 28%, white 72%),
+    color-mix(in srgb, var(--anxious-ecard-dark) 46%, white 54%) 45%,
+    transparent 78%);
+  opacity: 0.18;
+  animation-duration: 36s;
+}
+
+body.theme-anxious .bg-scene .blob-c {
+  background: radial-gradient(circle at 60% 40%,
+    color-mix(in srgb, var(--anxious-ecard-dark) 22%, white 78%),
+    color-mix(in srgb, var(--anxious-ecard-darker) 40%, white 60%) 50%,
+    transparent 80%);
+  opacity: 0.14;
+  animation-duration: 42s;
+}
 
 .emotion-card-stack .emotion-card {
   /* Background using a gradient of the theme's darkest shades */
