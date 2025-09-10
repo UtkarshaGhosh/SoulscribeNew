@@ -11,15 +11,7 @@ export default function LoadingScreen({ onContinue }: LoadingScreenProps) {
   }, []);
 
   useEffect(() => {
-    // Lazy load AOS only if present to avoid hard dependency
-    (async () => {
-      try {
-        const mod = await import(/* @vite-ignore */ 'aos');
-        try { await import(/* @vite-ignore */ 'aos/dist/aos.css'); } catch {}
-        mod.init?.();
-        mod.refresh?.();
-      } catch {}
-    })();
+    // Optionally hook animation libraries here; kept empty to avoid extra deps
   }, [showButton]);
 
   return (
