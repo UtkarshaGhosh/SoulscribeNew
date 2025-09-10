@@ -81,7 +81,29 @@ export default defineConfig(({ mode }) => ({
           }),
         });
 
-        const json = await genResponse.json();
+        let json: any = null;
+        try {
+          json = await genResponse.json();
+        } catch {}
+
+        if (!genResponse.ok) {
+          const status = genResponse.status;
+          const msg = (json && (json.error?.message || json.error)) || `Upstream error ${status}`;
+          res.statusCode = 500;
+          res.end(JSON.stringify({ error: msg, status }));
+          return;
+        }
+
+        const promptFeedback = json?.promptFeedback || null;
+        const isBlocked = Boolean(promptFeedback?.blockReason) || json?.candidates?.[0]?.finishReason === 'SAFETY';
+        if (isBlocked) {
+          const reason = promptFeedback?.blockReason || 'safety';
+          const friendly = "I couldn't respond to that request due to safety filters. Please try rephrasing in neutral, non-sensitive terms or ask about a different topic.";
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ reply: `${friendly}\n\nDetails: ${reason}` }));
+          return;
+        }
+
         const firstCandidate = json?.candidates?.[0] ?? null;
         const parts = firstCandidate?.content?.parts ?? [];
         const textReply = Array.isArray(parts)
@@ -90,8 +112,9 @@ export default defineConfig(({ mode }) => ({
 
         const reply = textReply && textReply.trim().length > 0 ? textReply : null;
         if (!reply) {
-          res.statusCode = 500;
-          res.end(JSON.stringify({ error: 'No reply from model', raw: json }));
+          const friendly = "I'm not sure how to respond to that right now. Please try again or rephrase your message.";
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ reply: friendly, raw: json }));
           return;
         }
 
