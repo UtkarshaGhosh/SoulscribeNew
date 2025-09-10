@@ -1714,9 +1714,9 @@ body.theme-anxious .reset-theme-button:hover { filter: brightness(1.03); transfo
 
 /* Anxious mood: use emotion-card gradient colors (dark) and lighter shades for LiveBackground blobs */
 body.theme-anxious {
-  /* Provide variables referencing the emotion card gradient colors for reuse */
-  --anxious-ecard-dark: #0A1417; /* emotion card start */
-  --anxious-ecard-darker: #0A282B; /* emotion card end */
+  /* Provide variables referencing the emotion card gradient colors for reuse (use dark greens) */
+  --anxious-ecard-dark: #0b3a2a; /* deep forest green */
+  --anxious-ecard-darker: #04251c; /* very dark green/teal */
 }
 
 body.theme-anxious .bg-scene .blob-a {
