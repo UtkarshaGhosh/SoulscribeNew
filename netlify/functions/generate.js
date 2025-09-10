@@ -51,7 +51,25 @@ exports.handler = async function (event, context) {
       }),
     });
 
-    const json = await genResponse.json();
+    let json = null;
+    try {
+      json = await genResponse.json();
+    } catch {}
+
+    if (!genResponse.ok) {
+      const status = genResponse.status;
+      const msg = (json && (json.error?.message || json.error)) || `Upstream error ${status}`;
+      return { statusCode: 500, body: JSON.stringify({ error: msg, status }) };
+    }
+
+    const promptFeedback = json?.promptFeedback || null;
+    const isBlocked = Boolean(promptFeedback?.blockReason) || json?.candidates?.[0]?.finishReason === 'SAFETY';
+    if (isBlocked) {
+      const reason = promptFeedback?.blockReason || 'safety';
+      const friendly = 'I couldn\'t respond to that request due to safety filters. Please try rephrasing in neutral, non-sensitive terms or ask about a different topic.';
+      return { statusCode: 200, body: JSON.stringify({ reply: `${friendly}\n\nDetails: ${reason}` }) };
+    }
+
     const firstCandidate = json?.candidates?.[0] ?? null;
     const parts = firstCandidate?.content?.parts ?? [];
     const textReply = Array.isArray(parts)
@@ -61,7 +79,8 @@ exports.handler = async function (event, context) {
     const reply = textReply && textReply.trim().length > 0 ? textReply : null;
 
     if (!reply) {
-      return { statusCode: 500, body: JSON.stringify({ error: 'No reply from model', raw: json }) };
+      const friendly = "I'm not sure how to respond to that right now. Please try again or rephrase your message.";
+      return { statusCode: 200, body: JSON.stringify({ reply: friendly, raw: json }) };
     }
 
     return { statusCode: 200, body: JSON.stringify({ reply }) };
