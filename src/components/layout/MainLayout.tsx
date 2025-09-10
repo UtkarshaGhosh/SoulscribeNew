@@ -49,7 +49,13 @@ export const MainLayout = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen relative">
+      {/* Live ambient background */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {/* @ts-ignore */}
+        {require('@/components/visual/LiveBackground').default ? require('@/components/visual/LiveBackground').default() : null}
+      </div>
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
       <main className="flex-1 overflow-auto">
         {renderContent()}

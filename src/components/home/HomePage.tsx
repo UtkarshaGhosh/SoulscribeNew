@@ -7,8 +7,17 @@ interface HomePageProps {
 }
 
 export const HomePage = ({ onNavigate }: HomePageProps) => {
+  const [showLoader, setShowLoader] = React.useState(true);
+
   return (
     <div className="min-h-screen bg-gradient-background">
+      {showLoader && (
+        <div className="fixed inset-0 z-50">
+          {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+          {/* @ts-ignore */}
+          {require('@/components/visual/LoadingScreen').default ? require('@/components/visual/LoadingScreen').default({ onContinue: () => setShowLoader(false) }) : null}
+        </div>
+      )}
       <div className="max-w-6xl mx-auto p-6 space-y-12">
         {/* Hero Section */}
         <div className="text-center space-y-8 py-12">

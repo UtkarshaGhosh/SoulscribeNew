@@ -1800,3 +1800,11 @@ body.theme-anxious .reset-theme-button:hover { filter: brightness(1.03); transfo
 .bubble-user { margin-left: auto; background: linear-gradient(180deg, color-mix(in srgb, var(--accent-primary) 50%, black 50%), color-mix(in srgb, var(--accent-primary) 35%, black 65%)); color: #fff; }
 .bubble-bot { margin-right: auto; background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); color: var(--text-primary); }
 .glass-panel { background: color-mix(in srgb, var(--bg-primary, #000) 35%, transparent); border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(14px) saturate(120%); -webkit-backdrop-filter: blur(14px) saturate(120%); }
+
+/* LiveBackground animated blobs */
+.bg-scene { position: fixed; inset: 0; overflow: hidden; z-index: -1; }
+.blob { position: absolute; width: 40vmax; height: 40vmax; filter: blur(50px); opacity: 0.18; border-radius: 50%; animation: floaty 30s ease-in-out infinite; }
+.blob-a { background: var(--gradient-glow); top: -10vmax; left: -10vmax; }
+.blob-b { background: radial-gradient(circle, hsl(var(--accent) / .35), transparent 60%); bottom: -12vmax; right: -8vmax; animation-duration: 36s; }
+.blob-c { background: radial-gradient(circle, hsl(var(--primary) / .25), transparent 60%); top: 10vmax; right: 20vmax; animation-duration: 42s; }
+@keyframes floaty { 0%,100% { transform: translate3d(0,0,0) scale(1);} 50% { transform: translate3d(2vmax,-2vmax,0) scale(1.05);} }
