@@ -25,13 +25,13 @@
 }
 
 .theme-calm {
-  --bg-primary: #0a0b12;
-  --bg-secondary: #111423;
-  --text-primary: #e8f0ff;
-  --text-secondary: #9aa6c7;
-  --accent-primary: #7c3aed; /* neon purple */
-  --accent-secondary: #06b6d4; /* cyan */
-  --border-color: rgba(124, 58, 237, 0.25);
+  --bg-primary: #071029;
+  --bg-secondary: #1e0f2f;
+  --text-primary: #fff0f6;
+  --text-secondary: #ffc0d6;
+  --accent-primary: #ffc0cb; /* baby pink */
+  --accent-secondary: #5b21b6; /* dark purple */
+  --border-color: rgba(255,192,203,0.18);
 }
 
 .theme-muted {
@@ -1844,4 +1844,30 @@ body.theme-stressed .bg-scene .blob-b {
 }
 body.theme-stressed .bg-scene .blob-c {
   background: radial-gradient(circle, rgba(99,102,241,0.30), transparent 60%);
+}
+
+/* Calm theme radial background and LiveBackground blobs */
+body.theme-calm {
+  animation: none !important;
+  --color1: #2b0b3a; /* dark purple */
+  --color2: #061236; /* dark blue */
+  --color3: #ffc0cb; /* baby pink */
+  --bg-color: #040512;
+  background: var(--bg-color) !important;
+  background-image:
+    radial-gradient(at 20% 20%, var(--color3) 0px, transparent 45%),
+    radial-gradient(at 80% 80%, var(--color1) 0px, transparent 55%),
+    radial-gradient(at 50% 60%, var(--color2) 0px, transparent 65%) !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+body.theme-calm .bg-scene .blob-a {
+  background: radial-gradient(circle at 30% 30%, rgba(255,192,203,0.5), rgba(139,92,246,0.25) 35%, transparent 60%);
+}
+body.theme-calm .bg-scene .blob-b {
+  background: radial-gradient(circle, rgba(59,48,151,0.32), transparent 60%);
+}
+body.theme-calm .bg-scene .blob-c {
+  background: radial-gradient(circle, rgba(6,18,54,0.35), transparent 60%);
 }
