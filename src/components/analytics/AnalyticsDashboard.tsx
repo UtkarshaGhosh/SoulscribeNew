@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
-import { Heart, Zap, Target, Activity, AlertTriangle } from "lucide-react";
+import { Heart, Zap, Target, AlertTriangle } from "lucide-react";
 import { useWellness } from "@/hooks/useSupabaseData";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -16,12 +16,10 @@ export const AnalyticsDashboard = () => {
 
   // Re-derive datasets from the fetched wellness data
   const wellbeingData = wellness.map((w) => ({ date: w.date, wellbeing: Number(w.wellbeing_score ?? 0), energy: Number(w.energy_level ?? 0) }));
-  const productivityData = wellness.map((w) => ({ date: w.date, productivity: Number(w.productivity_score ?? 0) }));
   const volatilityData = wellness.map((w) => ({ date: w.date, volatility: Number(w.emotional_volatility ?? 0) }));
   const resilienceData = wellness.map((w) => ({ date: w.date, resilience: Math.round(Number(w.resilience_score ?? 0) * 10) }));
   const avgWellbeing = wellbeingData.length ? wellbeingData.reduce((acc, curr) => acc + curr.wellbeing, 0) / wellbeingData.length : 0;
   const avgEnergy = wellbeingData.length ? wellbeingData.reduce((acc, curr) => acc + curr.energy, 0) / wellbeingData.length : 0;
-  const avgProductivity = productivityData.length ? productivityData.reduce((acc, curr) => acc + curr.productivity, 0) / productivityData.length : 0;
   const avgVolatility = volatilityData.length ? volatilityData.reduce((acc, curr) => acc + curr.volatility, 0) / volatilityData.length : 0;
   const currentResilience = resilienceData.length ? resilienceData[resilienceData.length - 1].resilience : 0;
   const currentVolatility = volatilityData.length ? volatilityData[volatilityData.length - 1].volatility : 0;
@@ -105,16 +103,6 @@ export const AnalyticsDashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-card border-border shadow-soft">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Productivity Score</CardTitle>
-            <Activity className="h-4 w-4 text-primary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-primary">{avgProductivity.toFixed(1)}/10</div>
-            <p className="text-xs text-muted-foreground mt-1">Average productivity (derived)</p>
-          </CardContent>
-        </Card>
 
         <Card className="bg-gradient-card border-border shadow-soft">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -141,23 +129,24 @@ export const AnalyticsDashboard = () => {
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis
                     dataKey="date"
-                    stroke="hsl(var(--muted-foreground))"
+                    stroke="#ffffff"
+                    tick={{ fill: '#ffffff' }}
                     tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                   />
-                  <YAxis stroke="hsl(var(--muted-foreground))" domain={[0, 10]} />
+                  <YAxis stroke="#ffffff" tick={{ fill: '#ffffff' }} domain={[0, 10]} />
                   <Line
                     type="monotone"
                     dataKey="wellbeing"
                     stroke="hsl(var(--primary))"
                     strokeWidth={3}
-                    dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
+                    dot={{ fill: "#ffffff", stroke: "#ffffff", strokeWidth: 2, r: 4 }}
                   />
                   <Line
                     type="monotone"
                     dataKey="energy"
                     stroke="hsl(var(--accent))"
                     strokeWidth={3}
-                    dot={{ fill: "hsl(var(--accent))", strokeWidth: 2, r: 4 }}
+                    dot={{ fill: "#ffffff", stroke: "#ffffff", strokeWidth: 2, r: 4 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -178,16 +167,17 @@ export const AnalyticsDashboard = () => {
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis
                   dataKey="date"
-                  stroke="hsl(var(--muted-foreground))"
+                  stroke="#ffffff"
+                  tick={{ fill: '#ffffff' }}
                   tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 />
-                <YAxis stroke="hsl(var(--muted-foreground))" domain={[0, 100]} tickFormatter={(v)=>`${v}%`} />
+                <YAxis stroke="#ffffff" tick={{ fill: '#ffffff' }} domain={[0, 100]} tickFormatter={(v)=>`${v}%`} />
                 <Line
                   type="monotone"
                   dataKey="resilience"
                   stroke={resilienceStroke}
                   strokeWidth={3}
-                  dot={{ fill: resilienceStroke, strokeWidth: 2, r: 5 }}
+                  dot={{ fill: "#ffffff", stroke: "#ffffff", strokeWidth: 2, r: 5 }}
                 />
               </LineChart>
             </ResponsiveContainer>
