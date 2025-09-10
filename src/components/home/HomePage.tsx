@@ -2,22 +2,14 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageCircle, BarChart3, Heart, Sparkles } from "lucide-react";
-import LoadingScreen from "@/components/visual/LoadingScreen";
 
 interface HomePageProps {
   onNavigate: (tab: string) => void;
 }
 
 export const HomePage = ({ onNavigate }: HomePageProps) => {
-  const [showLoader, setShowLoader] = React.useState(true);
-
   return (
     <div className="min-h-screen bg-gradient-background">
-      {showLoader && (
-        <div className="fixed inset-0 z-50">
-          <LoadingScreen onContinue={() => setShowLoader(false)} />
-        </div>
-      )}
       <div className="max-w-6xl mx-auto p-6 space-y-12">
         {/* Hero Section */}
         <div className="text-center space-y-8 py-12">
