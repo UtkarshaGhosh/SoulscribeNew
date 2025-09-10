@@ -115,14 +115,28 @@ export const ChatInterface = ({ onMoodChange }: ChatInterfaceProps) => {
     try {
       setIsGenerating(true);
       const payload = { messages: history.slice(-10), mood };
-      const resp = await fetch('/api/generate', {
+      // Try primary endpoint first
+      let resp = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
+      // Fallbacks: try the Netlify function path directly if /api/generate returns 404
       if (resp.status === 404) {
-        console.error('AI endpoint not found (404): /api/generate');
+        try {
+          resp = await fetch('/.netlify/functions/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+        } catch (e) {
+          // ignore and fall through to error handling below
+        }
+      }
+
+      if (resp.status === 404) {
+        console.error('AI endpoint not found (404): /api/generate and /.netlify/functions/generate');
         return "The AI service is not available right now.";
       }
       if (resp.status === 401) {
