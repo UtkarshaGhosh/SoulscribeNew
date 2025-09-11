@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getMyProfile, upsertMyProfile } from "@/integrations/supabase/repositories/profiles";
-import { addMoodEntry, listMoodEntriesLastNDays, getMoodDistributionForDate } from "@/integrations/supabase/repositories/moodEntries";
+import { addMoodEntry, listMoodEntriesLastNDays, getMoodDistributionForDate, getMoodCountsAllTime } from "@/integrations/supabase/repositories/moodEntries";
 import { addChatMessage, listChatMessages, clearChatMessages } from "@/integrations/supabase/repositories/chatMessages";
 import { upsertWellnessMetric, getLastNDaysWellness } from "@/integrations/supabase/repositories/wellnessMetrics";
 import type { Enums } from "@/integrations/supabase/types";
@@ -30,12 +30,17 @@ export function useAddMoodEntry() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["mood_entries"] });
       qc.invalidateQueries({ queryKey: ["mood_distribution"] });
+      qc.invalidateQueries({ queryKey: ["mood_counts_all_time"] });
     },
   });
 }
 
 export function useMoodDistribution(dateISO: string) {
   return useQuery({ queryKey: ["mood_distribution", dateISO], queryFn: () => getMoodDistributionForDate(dateISO), staleTime: 30_000 });
+}
+
+export function useMoodCountsAllTime() {
+  return useQuery({ queryKey: ["mood_counts_all_time"], queryFn: getMoodCountsAllTime, staleTime: 30_000 });
 }
 
 export function useChatMessages() {
