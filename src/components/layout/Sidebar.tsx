@@ -1,4 +1,4 @@
-import { Home, MessageCircle, User, BarChart3, Heart, LogOut } from "lucide-react";
+import { Home, MessageCircle, User, BarChart3, Heart, LogOut, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,7 @@ const navigation = [
   { id: "chat", icon: MessageCircle, label: "Chat" },
   { id: "profile", icon: User, label: "Profile" },
   { id: "analytics", icon: BarChart3, label: "Analytics" },
+  { id: "insights", icon: Brain, label: "Insights" },
 ];
 
 export const Sidebar = ({ activeTab, onTabChange }: SidebarProps) => {
