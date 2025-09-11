@@ -4,6 +4,7 @@ import { HomePage } from "../home/HomePage";
 import { ChatInterface } from "../chat/ChatInterface";
 import { AnalyticsDashboard } from "../analytics/AnalyticsDashboard";
 import { ProfilePage } from "../profile/ProfilePage";
+import { InsightsTab } from "../analytics/InsightsTab";
 import LiveBackground from "@/components/visual/LiveBackground";
 import type { Mood } from "../chat/ChatInterface";
 import { applyThemeForMood } from "@/lib/moodTheme";
@@ -44,6 +45,8 @@ export const MainLayout = () => {
         return <AnalyticsDashboard />;
       case "profile":
         return <ProfilePage />;
+      case "insights":
+        return <InsightsTab />;
       default:
         return <HomePage onNavigate={setActiveTab} />;
     }
