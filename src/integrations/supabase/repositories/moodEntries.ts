@@ -45,3 +45,15 @@ export async function getMoodDistributionForDate(dateISO: string) {
   data.forEach(r => counts.set(r.mood as Enums<'mood_type'>, (counts.get(r.mood as Enums<'mood_type'>) ?? 0) + 1));
   return Array.from(counts.entries()).map(([mood, count]) => ({ mood, count }));
 }
+
+export async function getMoodCountsAllTime() {
+  const user_id = await requireUserId();
+  const { data, error } = await supabase
+    .from("mood_entries")
+    .select("mood")
+    .eq("user_id", user_id);
+  if (error) throw error;
+  const counts = new Map<Enums<'mood_type'>, number>();
+  data.forEach(r => counts.set(r.mood as Enums<'mood_type'>, (counts.get(r.mood as Enums<'mood_type'>) ?? 0) + 1));
+  return Array.from(counts.entries()).map(([mood, count]) => ({ mood, count }));
+}
